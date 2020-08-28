@@ -3,6 +3,7 @@ using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using ImGuiNET;
+using System;
 
 namespace Notes
 {
@@ -59,6 +60,9 @@ namespace Notes
             _gd.Dispose();
         }
 
+        // TODO: will eventually need to handle dynamically resizing the buffer used for the input text area
+        static string inputText = "";
+
         private static unsafe void SubmitUI()
         {
             {
@@ -68,7 +72,25 @@ namespace Notes
                 ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
                 ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 
-                ImGui.Text("Hello world!");
+                Console.WriteLine(ImGui.GetWindowSize());
+
+                float paneHeight = ImGui.GetWindowSize().Y - 16;
+                float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
+
+                ImGui.BeginChild("Text area", new Vector2(paneWidth, paneHeight), true);
+                ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16));
+
+                ImGui.End();
+
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X/2 + 4, 8));
+                ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
+
+                foreach (var line in inputText.Split('\n'))
+                {
+                    ImGui.Text(line);
+                }
+
+                ImGui.End();
 
                 ImGui.End();
             }
