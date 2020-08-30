@@ -4,6 +4,10 @@ using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using ImGuiNET;
 using System;
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+using Notes.MarkdigRenderers;
 
 namespace Notes
 {
@@ -63,6 +67,8 @@ namespace Notes
         // TODO: will eventually need to handle dynamically resizing the buffer used for the input text area
         static string inputText = "";
 
+        static MarkdownDocument parsedMarkdown = Markdown.Parse("");
+
         private static unsafe void SubmitUI()
         {
             {
@@ -72,23 +78,22 @@ namespace Notes
                 ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
                 ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 
-                Console.WriteLine(ImGui.GetWindowSize());
-
                 float paneHeight = ImGui.GetWindowSize().Y - 16;
                 float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
 
                 ImGui.BeginChild("Text area", new Vector2(paneWidth, paneHeight), true);
-                ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16));
+
+                if (ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16)))
+                {
+                    parsedMarkdown = Markdown.Parse(inputText);
+                }
 
                 ImGui.End();
 
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X/2 + 4, 8));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, 8));
                 ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
 
-                foreach (var line in inputText.Split('\n'))
-                {
-                    ImGui.Text(line);
-                }
+                new MarkdigASTRenderer().Render(parsedMarkdown);
 
                 ImGui.End();
 
