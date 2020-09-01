@@ -69,6 +69,10 @@ namespace Notes
 
         static MarkdownDocument parsedMarkdown = Markdown.Parse("");
 
+        static string currentRenderType = "Plain text";
+
+        static IMarkdigRenderer renderer = new MarkdigPlainTextRenderer();
+
         private static unsafe void SubmitUI()
         {
             {
@@ -77,6 +81,27 @@ namespace Notes
                 ImGui.SetNextWindowPos(new Vector2(0, 0));
                 ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
                 ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
+
+                if (ImGui.BeginCombo("Render Type", currentRenderType))
+                {
+
+                    if (ImGui.Selectable("AST", currentRenderType == "AST"))
+                    {
+                        renderer = new MarkdigASTRenderer();
+                        currentRenderType = "AST";
+                    }
+
+                    if (ImGui.Selectable("Plain text", currentRenderType == "Plain text")) 
+                    {
+                        renderer = new MarkdigPlainTextRenderer();
+                        currentRenderType = "Plain text";
+                    }
+
+                    ImGui.EndCombo();
+                }
+
+                var panelCursorY = ImGui.GetCursorPosY();
+                
 
                 float paneHeight = ImGui.GetWindowSize().Y - 16;
                 float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
@@ -90,10 +115,10 @@ namespace Notes
 
                 ImGui.End();
 
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, 8));
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
                 ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
 
-                new MarkdigASTRenderer().Render(parsedMarkdown);
+                renderer.Render(parsedMarkdown);
 
                 ImGui.End();
 

@@ -18,12 +18,12 @@ namespace Notes.MarkdigRenderers
             }
         }
 
-        public void RenderBlock(Block block, int indent)
+        private void RenderBlock(Block block, int indent)
         {
             ImGui.Text($"{new String(' ', indent)}Block ({block.GetType().ToString()}): {block.ToPositionText()}");
         }
 
-        public void RenderBlock(ContainerBlock block, int indent)
+        private void RenderBlock(ContainerBlock block, int indent)
         {
             ImGui.Text($"{new String(' ', indent)}Block ({block.GetType().ToString()}): {block.ToPositionText()}");
             foreach (var childBlock in block)
@@ -32,19 +32,19 @@ namespace Notes.MarkdigRenderers
             }
         }
 
-        public void RenderBlock(LeafBlock block, int indent)
+        private void RenderBlock(LeafBlock block, int indent)
         {
             ImGui.Text($"{new String(' ', indent)}Block ({block.GetType().ToString()}): {block.ToPositionText()}");
             if (block.Inline == null) return;
             RenderInline(block.Inline as dynamic, indent + 2);
         }
 
-        public void RenderInline(Inline inline, int indent)
+        private void RenderInline(Inline inline, int indent)
         {
             ImGui.Text($"{new String(' ', indent)}Inline ({inline.GetType().ToString()}): {inline.ToPositionText()}");
         }
 
-        public void RenderInline(ContainerInline inline, int indent)
+        private void RenderInline(ContainerInline inline, int indent)
         {
             ImGui.Text($"{new String(' ', indent)}Inline ({inline.GetType().ToString()}): {inline.ToPositionText()}");
             foreach (var childInline in inline)
@@ -53,7 +53,7 @@ namespace Notes.MarkdigRenderers
             }
         }
 
-        public void RenderInline(LeafInline inline, int indent)
+        private void RenderInline(LeafInline inline, int indent)
         {
             ImGui.Text($"{new String(' ', indent)}Inline ({inline.GetType().ToString()}): {inline.ToPositionText()}");
             ImGui.Text($"{new String(' ', indent + 1)}{inline.ToString()}");
