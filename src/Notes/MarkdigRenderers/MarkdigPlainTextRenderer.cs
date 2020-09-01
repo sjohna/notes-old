@@ -7,15 +7,15 @@ namespace Notes.MarkdigRenderers
     class MarkdigPlainTextRenderer : IMarkdigRenderer
     {
         private bool newLine;
-        private bool startParagraph;
         private int listIndent;
+        private bool firstBlock;
 
         private int TextIndent => listIndent == 0 ? 0 : listIndent + 3;
 
         public void Render(MarkdownDocument document)
         {
             newLine = false;
-            startParagraph = false;
+            firstBlock = true;
             listIndent = 0;
 
             var spacing = ImGui.GetStyle().ItemSpacing;
@@ -24,10 +24,23 @@ namespace Notes.MarkdigRenderers
 
             foreach (var block in document)
             {
-                RenderBlock(block as dynamic);
+                RenderTopLevelBlock(block as dynamic);
             }
 
             ImGui.PopStyleVar(1);
+        }
+
+        private void RenderTopLevelBlock(Block block)
+        {
+            if (!firstBlock)
+            {
+                ImGui.NewLine();
+                ImGui.NewLine();
+            }
+            firstBlock = false;
+            newLine = false;
+
+            RenderBlock(block as dynamic);
         }
 
         private void RenderBlock(Block block)
@@ -40,8 +53,7 @@ namespace Notes.MarkdigRenderers
             if (newLine) ImGui.NewLine();
             newLine = false;
 
-            ImGui.Text($"{new string(' ', listIndent)} - ");
-            ImGui.SameLine();
+            RenderText($"{new string(' ', listIndent)} - ");
 
             RenderBlock(block as ContainerBlock);
         }
@@ -57,7 +69,6 @@ namespace Notes.MarkdigRenderers
         {
             RenderBlock(block as LeafBlock);
 
-            startParagraph = true;
             newLine = true;
         }
 
@@ -90,27 +101,25 @@ namespace Notes.MarkdigRenderers
 
         private void RenderInline(LeafInline inline)
         {
-            if (startParagraph && listIndent == 0)
-            {
-                ImGui.NewLine();
-            }
-            startParagraph = false;
-
             if (newLine)
             {
-                newLine = false;
                 ImGui.NewLine();
-                ImGui.Text(new string(' ', TextIndent));
-                ImGui.SameLine();
+                RenderText(new string(' ', TextIndent));
             }
+            newLine = false;
 
-            ImGui.Text($"{inline.ToString()}");
-            ImGui.SameLine();
+            RenderText($"{inline.ToString()}");
         }
 
         private void RenderInline(LineBreakInline inline)
         {
             newLine = true;
+        }
+
+        private void RenderText(string text)
+        {
+            ImGui.Text(text);
+            ImGui.SameLine();
         }
     }
 }
