@@ -37,10 +37,11 @@ namespace Notes.MarkdigRenderers
 
         private void RenderBlock(ListItemBlock block)
         {
-            if (newLine) newLine = false;
-            else ImGui.SameLine();
+            if (newLine) ImGui.NewLine();
+            newLine = false;
 
             ImGui.Text($"{new string(' ', listIndent)} - ");
+            ImGui.SameLine();
 
             RenderBlock(block as ContainerBlock);
         }
@@ -98,12 +99,13 @@ namespace Notes.MarkdigRenderers
             if (newLine)
             {
                 newLine = false;
+                ImGui.NewLine();
                 ImGui.Text(new string(' ', TextIndent));
                 ImGui.SameLine();
             }
-            else ImGui.SameLine();
 
             ImGui.Text($"{inline.ToString()}");
+            ImGui.SameLine();
         }
 
         private void RenderInline(LineBreakInline inline)
