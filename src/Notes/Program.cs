@@ -8,6 +8,8 @@ using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Notes.MarkdigRenderers;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Notes
 {
@@ -22,6 +24,8 @@ namespace Notes
         private static Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
 
         private static ImFontPtr customFont;
+
+        static MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
 
         static void Main(string[] args)
         {
@@ -38,6 +42,8 @@ namespace Notes
             };
             _cl = _gd.ResourceFactory.CreateCommandList();
             _controller = new ImGuiRenderer(_gd, _gd.MainSwapchain.Framebuffer.OutputDescription, _window.Width, _window.Height);
+
+          
 
             // Main application loop
             while (_window.Exists)
@@ -72,6 +78,89 @@ namespace Notes
         static string currentRenderType = "Plain text";
 
         static IMarkdigRenderer renderer = new MarkdigPlainTextRenderer();
+
+        static bool lastEventWasCharFilter = false;
+        static char lastCharFilterChar;
+
+        static unsafe void PrintCallbackData(ImGuiInputTextCallbackData* data)
+        {
+            Console.WriteLine($"Callback event: {data->EventFlag.ToString()}");
+            Console.WriteLine($"  BufDirty: {data->BufDirty}");
+            Console.WriteLine($"  BufSize: {data->BufSize}");
+            Console.WriteLine($"  BufTextLen: {data->BufTextLen}");
+            Console.WriteLine($"  CursorPos: {data->CursorPos}");
+            Console.WriteLine($"  Event Char: {Encoding.UTF8.GetString(BitConverter.GetBytes(data->EventChar))}");
+            Console.WriteLine($"  EventKey: {data->EventKey.ToString()}");
+            Console.WriteLine($"  SelectionStart: {data->SelectionStart}");
+            Console.WriteLine($"  SelectionEnd: {data->SelectionEnd}");
+        }
+
+        private static string ExtractInputTextLine(int lineEndIndex)
+        {
+            int currIndex = lineEndIndex;
+
+            while (currIndex > 0 && inputText[currIndex - 1] != '\n')
+            {
+                currIndex--;
+            }
+
+            return inputText.Substring(currIndex, lineEndIndex - currIndex + 1);
+        }
+
+        private static unsafe int textBoxCallback(ImGuiInputTextCallbackData* data)
+        {
+            var dataPtr = new ImGuiInputTextCallbackDataPtr(data);
+
+            if (dataPtr.EventFlag == ImGuiInputTextFlags.CallbackCharFilter)
+            {
+                PrintCallbackData(data);
+                lastEventWasCharFilter = true;
+                lastCharFilterChar = Encoding.UTF8.GetString(BitConverter.GetBytes(data->EventChar))[0];
+                return 0;
+            }
+
+            if (dataPtr.EventFlag == ImGuiInputTextFlags.CallbackAlways && lastEventWasCharFilter)
+            {
+                PrintCallbackData(data);
+
+                if (lastCharFilterChar == '\n')
+                {
+                    string previousLine = ExtractInputTextLine(dataPtr.CursorPos - 2);
+                    
+                    if (previousLine.Trim() == "-")
+                    {
+                        dataPtr.DeleteChars(dataPtr.CursorPos - previousLine.Length - 1, previousLine.Length);
+
+                        lastEventWasCharFilter = false;
+                        return 1;
+                    }
+                    if (previousLine.Trim() != "")
+                    {
+                        int spaceIndex = 0;
+                        while (previousLine[spaceIndex] == ' ') ++spaceIndex;
+
+                        var newInputTextBuilder = new StringBuilder();
+                        newInputTextBuilder.Append(new String(' ', spaceIndex));
+
+                        if (previousLine.Length >= spaceIndex + 1 &&
+                            previousLine[spaceIndex] == '-' &&
+                            previousLine[spaceIndex + 1] == ' ')
+                        {
+                            newInputTextBuilder.Append("- ");
+                        }
+
+                        dataPtr.InsertChars(dataPtr.CursorPos, newInputTextBuilder.ToString());
+
+                        lastEventWasCharFilter = false;
+                        return 1;
+                    }
+                }
+
+                lastEventWasCharFilter = false;
+            }
+
+            return 0;
+        }
 
         private static unsafe void SubmitUI()
         {
@@ -108,9 +197,9 @@ namespace Notes
 
                 ImGui.BeginChild("Text area", new Vector2(paneWidth, paneHeight), true);
 
-                if (ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16)))
+                if (ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
                 {
-                    parsedMarkdown = Markdown.Parse(inputText);
+                    parsedMarkdown = Markdown.Parse(inputText, pipeline);
                 }
 
                 ImGui.End();
