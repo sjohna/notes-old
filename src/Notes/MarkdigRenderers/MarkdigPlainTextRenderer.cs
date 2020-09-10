@@ -149,7 +149,7 @@ namespace Notes.MarkdigRenderers
                 {
                     RenderNonWrappingText(text.Substring(0,blankIndex).Trim());
                     newLine = true;
-                    RenderLineBreakIfNecessary();
+                    RenderLineBreakIfNecessary();   // ugly. Need to handle rendering newlines better...
                     RenderWrappingText(text.Substring(blankIndex).Trim());
                     return;
                 }
