@@ -48,11 +48,15 @@ namespace Notes.MarkdigRenderers
             ImGui.Text("ERROR: unrecognized block!");
         }
 
+        private void RenderBlock(HeadingBlock block)
+        {
+            RenderText($"{new string('#', block.Level)} ");
+
+            RenderBlock(block as LeafBlock);
+        }
+
         private void RenderBlock(ListItemBlock block)
         {
-            if (newLine) ImGui.NewLine();
-            newLine = false;
-
             RenderText($"{new string(' ', listIndent)} - ");
 
             RenderBlock(block as ContainerBlock);
@@ -108,7 +112,7 @@ namespace Notes.MarkdigRenderers
             }
             newLine = false;
 
-            RenderText($"{inline.ToString()}");
+            RenderText(inline.ToString());
         }
 
         private void RenderInline(LineBreakInline inline)

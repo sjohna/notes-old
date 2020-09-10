@@ -6,10 +6,8 @@ using ImGuiNET;
 using System;
 using Markdig;
 using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
 using Notes.MarkdigRenderers;
 using System.Text;
-using System.Runtime.InteropServices;
 
 namespace Notes
 {
