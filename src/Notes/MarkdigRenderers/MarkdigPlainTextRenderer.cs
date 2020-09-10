@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Text;
 
 namespace Notes.MarkdigRenderers
 {
@@ -50,14 +51,14 @@ namespace Notes.MarkdigRenderers
 
         private void RenderBlock(HeadingBlock block)
         {
-            RenderText($"{new string('#', block.Level)} ");
+            RenderNonWrappingText($"{new string('#', block.Level)} ");
 
             RenderBlock(block as LeafBlock);
         }
 
         private void RenderBlock(ListItemBlock block)
         {
-            RenderText($"{new string(' ', listIndent)} - ");
+            RenderNonWrappingText($"{new string(' ', listIndent)} - ");
 
             RenderBlock(block as ContainerBlock);
         }
@@ -105,14 +106,17 @@ namespace Notes.MarkdigRenderers
 
         private void RenderInline(LeafInline inline)
         {
-            if (newLine)
-            {
-                ImGui.NewLine();
-                RenderText(new string(' ', TextIndent));
-            }
-            newLine = false;
+            RenderWrappingText(inline.ToString());
+        }
 
-            RenderText(inline.ToString());
+        // Render a linebreak that occurs within a block, either due to a LineBreakInline in the markdown, or due to text wrapping
+        private void RenderLineBreakIfNecessary()
+        {
+            if (!newLine) return;
+
+            ImGui.NewLine();
+            newLine = false;
+            RenderNonWrappingText(new string(' ', TextIndent));
         }
 
         private void RenderInline(LineBreakInline inline)
@@ -120,8 +124,49 @@ namespace Notes.MarkdigRenderers
             newLine = true;
         }
 
-        private void RenderText(string text)
+        private void RenderWrappingText(string text)
         {
+            // this line wrapping algorithm won't work in all cases, I think
+            var lineBuilder = new StringBuilder();
+
+            var windowWidth = ImGui.GetWindowSize().X;
+            var currentCursorX = ImGui.GetCursorPosX();
+            var textExtent = currentCursorX + ImGui.CalcTextSize(text).X;
+
+            if (textExtent < windowWidth)
+            {
+                RenderNonWrappingText(text);
+                return;
+            }
+
+            int searchIndex = text.Length - 1;
+            int blankIndex = text.LastIndexOf(' ', searchIndex);
+
+            while (blankIndex > 0)
+            {
+
+                if (currentCursorX + ImGui.CalcTextSize(text.Substring(0,blankIndex)).X < windowWidth)
+                {
+                    RenderNonWrappingText(text.Substring(0,blankIndex).Trim());
+                    newLine = true;
+                    RenderLineBreakIfNecessary();
+                    RenderWrappingText(text.Substring(blankIndex).Trim());
+                    return;
+                }
+
+                searchIndex = blankIndex - 1;
+                blankIndex = text.LastIndexOf(' ', searchIndex);
+            }
+
+            // didn't find a place to break, so just render the whole line
+            RenderNonWrappingText(text);
+        }
+
+
+        private void RenderNonWrappingText(string text)
+        {
+            RenderLineBreakIfNecessary();
+
             ImGui.Text(text);
             ImGui.SameLine();
         }
