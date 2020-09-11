@@ -40,16 +40,16 @@ namespace Notes.UserInterfaces
             Console.WriteLine($"  SelectionEnd: {data->SelectionEnd}");
         }
 
-        private string ExtractInputTextLine(int lineEndIndex)
+        private string ExtractInputTextLine(string stringInBuffer, int lineEndIndex)
         {
             int currIndex = lineEndIndex;
 
-            while (currIndex > 0 && inputText[currIndex - 1] != '\n')
+            while (currIndex > 0 && stringInBuffer[currIndex - 1] != '\n')
             {
                 currIndex--;
             }
 
-            return inputText.Substring(currIndex, lineEndIndex - currIndex + 1);
+            return stringInBuffer.Substring(currIndex, lineEndIndex - currIndex + 1);
         }
 
         private unsafe int textBoxCallback(ImGuiInputTextCallbackData* data)
@@ -70,7 +70,9 @@ namespace Notes.UserInterfaces
 
                 if (lastCharFilterChar == '\n')
                 {
-                    string previousLine = ExtractInputTextLine(dataPtr.CursorPos - 2);
+                    var stringInBuffer = Encoding.UTF8.GetString((byte*)dataPtr.Buf, dataPtr.BufTextLen);
+
+                    string previousLine = ExtractInputTextLine(stringInBuffer, dataPtr.CursorPos - 1);
 
                     if (previousLine.Trim() == "-")
                     {
