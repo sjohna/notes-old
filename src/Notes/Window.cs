@@ -2,9 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
@@ -20,7 +18,6 @@ namespace Notes
         private ImGuiRenderer _controller;
 
         private IUserInterface userInterface;
-        private bool disposedValue;
 
         private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
 

@@ -1,3 +1,6 @@
+src/UIImageTests/TestFiles/**/Output/**
+src/UIImageTests/TestFiles/**/Diff/**
+
 *.swp
 *.*~
 project.lock.json
