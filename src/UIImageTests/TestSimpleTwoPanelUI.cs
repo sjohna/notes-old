@@ -23,8 +23,20 @@ namespace UIImageTests
             if (testInfo != null) testInfo.Dispose();
         }
 
-        [TestCase("AST", 1280, 800)]
-        [TestCase("Plain text", 1280, 800)]
+        public static IEnumerable<object[]> TestCaseParameters()
+        {
+            yield return new object[] { "AST", 1280, 800 };
+            yield return new object[] { "Plain text", 1280, 800 };
+            yield return new object[] { "AST", 500, 500 };
+            yield return new object[] { "Plain text", 500, 500 };
+            yield return new object[] { "AST", 200, 200 };
+            yield return new object[] { "Plain text", 200, 200 };
+            yield return new object[] { "AST", 200, 1000 };
+            yield return new object[] { "Plain text", 200, 1000 };
+        }
+
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
         public void EmptyInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(EmptyInputText)}_{renderType.Replace(" ", "")}Renderer";
