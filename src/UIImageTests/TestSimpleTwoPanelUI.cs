@@ -13,7 +13,7 @@ namespace UIImageTests
     [TestFixture]
     public class TestSimpleTwoPanelUI
     {
-        UIImageTestInfo testInfo;
+        private UIImageTestInfo testInfo;
 
         [TearDown]
         public void TearDown()

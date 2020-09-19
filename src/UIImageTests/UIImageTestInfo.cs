@@ -23,9 +23,9 @@ namespace UIImageTests
             FullTestName = $"{testName}_{windowWidth}x{windowHeight}";
             Window = new Window(0, 0, windowWidth, windowHeight, "Notes");
 
-            OutputFilePath = TestSupport.GetOutputFileForTest(testSuiteName, testName);
-            ReferenceFilePath = TestSupport.GetReferenceFileForTest(testSuiteName, testName);
-            DiffFilePath = TestSupport.GetDiffFileForTest(testSuiteName, testName);
+            OutputFilePath = TestSupport.GetOutputFileForTest(testSuiteName, FullTestName);
+            ReferenceFilePath = TestSupport.GetReferenceFileForTest(testSuiteName, FullTestName);
+            DiffFilePath = TestSupport.GetDiffFileForTest(testSuiteName, FullTestName);
 
             EnsureTestDirectoriesExist();
         }
