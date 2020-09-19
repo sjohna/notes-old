@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Notes.MarkdigRenderers
 {
-    class MarkdigPlainTextRenderer : IMarkdigRenderer
+    public class MarkdigPlainTextRenderer : IMarkdigRenderer
     {
         private bool newLine;
         private int listIndent;

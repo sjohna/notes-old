@@ -14,16 +14,35 @@ namespace Notes.UserInterfaces
     {
         // TODO: will eventually need to handle dynamically resizing the buffer used for the input text area, maybe?
         private string inputText = "";
+
+        // TODO: ensure that markdown is always parsed appropriately (i.e. with the right pipeline)
+        public string InputText 
+        {
+            get => inputText;
+            set
+            {
+                inputText = value;
+                parsedMarkdown = Markdown.Parse(inputText, pipeline);
+            }
+        }
+
         private MarkdownDocument parsedMarkdown = Markdown.Parse("");
-        private string currentRenderType = "Plain text";
-        private IMarkdigRenderer renderer = new MarkdigPlainTextRenderer();
+
+        // TODO: deduplicate these two properties
+        public string CurrentRenderType { get; set; }
+        public IMarkdigRenderer Renderer { get; set; }
+
         private bool lastEventWasCharFilter = false;
         private char lastCharFilterChar;
         private Sdl2Window _window;
         private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
 
+        // TODO: make the SubmitUI method take in the winodw, not the constructor
+        // TODO: new interface: IWindowRenderer. Change UserInterface terminology to Renderer, differentiate between renderers for a whole window, and sub-renderers
         public SimpleTwoPanelUI(Sdl2Window window)
         {
+            CurrentRenderType = "Plain text";
+            Renderer = new MarkdigPlainTextRenderer();
             _window = window;
         }
 
@@ -118,26 +137,26 @@ namespace Notes.UserInterfaces
                 ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
                 ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 
-                if (ImGui.BeginCombo("Render Type", currentRenderType))
+                // TODO: a better way to do combo boxes...
+                if (ImGui.BeginCombo("Render Type", CurrentRenderType))
                 {
 
-                    if (ImGui.Selectable("AST", currentRenderType == "AST"))
+                    if (ImGui.Selectable("AST", CurrentRenderType == "AST"))
                     {
-                        renderer = new MarkdigASTRenderer();
-                        currentRenderType = "AST";
+                        Renderer = new MarkdigASTRenderer();
+                        CurrentRenderType = "AST";
                     }
 
-                    if (ImGui.Selectable("Plain text", currentRenderType == "Plain text"))
+                    if (ImGui.Selectable("Plain text", CurrentRenderType == "Plain text"))
                     {
-                        renderer = new MarkdigPlainTextRenderer();
-                        currentRenderType = "Plain text";
+                        Renderer = new MarkdigPlainTextRenderer();
+                        CurrentRenderType = "Plain text";
                     }
 
                     ImGui.EndCombo();
                 }
 
                 var panelCursorY = ImGui.GetCursorPosY();
-
 
                 float paneHeight = ImGui.GetWindowSize().Y - 16;
                 float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
@@ -154,7 +173,7 @@ namespace Notes.UserInterfaces
                 ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
                 ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
 
-                renderer.Render(parsedMarkdown);
+                Renderer.Render(parsedMarkdown);
 
                 ImGui.End();
 

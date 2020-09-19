@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Notes.MarkdigRenderers
 {
-    class MarkdigASTRenderer : IMarkdigRenderer
+    public class MarkdigASTRenderer : IMarkdigRenderer
     {
         public void Render(MarkdownDocument document)
         {

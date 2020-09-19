@@ -13,11 +13,14 @@ namespace Notes
     public class Window : IDisposable
     {
         private Sdl2Window _window;
+
+        public Sdl2Window SDLWindow => _window;
+
         private GraphicsDevice _gd;
         private CommandList _cl;
         private ImGuiRenderer _controller;
 
-        private IUserInterface userInterface;
+        public  IUserInterface UserInterface { get; set; }
 
         private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
 
@@ -36,8 +39,6 @@ namespace Notes
             };
             _cl = _gd.ResourceFactory.CreateCommandList();
             _controller = new ImGuiRenderer(_gd, _gd.MainSwapchain.Framebuffer.OutputDescription, _window.Width, _window.Height);
-
-            userInterface = new SimpleTwoPanelUI(_window);
         }
 
         public void MainLoop()
@@ -48,7 +49,7 @@ namespace Notes
                 if (!_window.Exists) { break; }
                 _controller.Update(1f / 60f, snapshot); // Feed the input events to our ImGui controller, which passes them through to ImGui.
 
-                userInterface.SubmitUI();
+                UserInterface.SubmitUI();
 
                 _cl.Begin();
                 _cl.SetFramebuffer(_gd.MainSwapchain.Framebuffer);
@@ -90,7 +91,7 @@ namespace Notes
                 pixelFormat,
                 TextureUsage.Staging));
 
-            userInterface.SubmitUI();
+            UserInterface.SubmitUI();
 
             _cl.Begin();
             _cl.SetFramebuffer(framebuffer);
@@ -127,6 +128,7 @@ namespace Notes
 
         public void Dispose()
         {
+            _window.Close();
             _gd.WaitForIdle();
             _controller.Dispose();
             _cl.Dispose();
