@@ -129,5 +129,155 @@ This is a third line!";
             testInfo.Window.UserInterface = userInterface;
             DoTest(testInfo);
         }
+
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
+        public void HeadingsInInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(HeadingsInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+            userInterface.InputText = @"# Heading One
+## Heading Two
+### Heading Three
+#### Heading Four
+##### Heading Five
+###### Heading Six
+
+Alternate Heading One
+=====================
+
+Alternate Heading Two
+---------------------";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
+        public void HorizontalRulesInInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(HorizontalRulesInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+            userInterface.InputText = @"Horizontal rules:
+
+---
+
+***
+
+___";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
+
+        // test case input text taken from example at https://markdown-it.github.io/
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
+        public void BlockQuotesInInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(BlockQuotesInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+            userInterface.InputText = @"Block quotes:
+
+> Blockquotes can also be nested...
+>> ...by using additional greater-than signs right next to each other...
+> > > ...or with spaces between arrows.";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
+
+        // test case input text taken from example at https://markdown-it.github.io/
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
+        public void CodeInInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(CodeInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+            userInterface.InputText = @"
+## Code
+
+Inline `code`
+
+Indented code
+
+    // Some comments
+    line 1 of code
+    line 2 of code
+    line 3 of code
+
+
+Block code ""fences""
+
+```
+Sample text here...
+```
+
+Syntax highlighting
+
+``` js
+var foo = function(bar) {
+                return bar++;
+            };
+
+            console.log(foo(5));
+```";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
+
+        // test case input text taken from example at https://markdown-it.github.io/
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
+        public void OrderedListsInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(OrderedListsInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+            userInterface.InputText = @"
+Ordered
+
+1. Lorem ipsum dolor sit amet
+2. Consectetur adipiscing elit
+3. Integer molestie lorem at massa
+
+
+1. You can use sequential numbers...
+1. ...or keep all the numbers as `1.`
+
+Start numbering with offset:
+
+57. foo
+1. bar";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
     }
 }
