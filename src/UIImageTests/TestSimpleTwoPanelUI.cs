@@ -46,15 +46,6 @@ namespace UIImageTests
 
             userInterface.CurrentRenderType = renderType;
 
-            if (renderType == "AST")
-            {
-                userInterface.Renderer = new MarkdigASTRenderer();
-            }
-            else if (renderType == "Plain text")
-            {
-                userInterface.Renderer = new MarkdigPlainTextRenderer();
-            }
-
             testInfo.Window.UserInterface = userInterface;
             DoTest(testInfo);
         }
@@ -69,15 +60,6 @@ namespace UIImageTests
             var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
 
             userInterface.CurrentRenderType = renderType;
-
-            if (renderType == "AST")
-            {
-                userInterface.Renderer = new MarkdigASTRenderer();
-            }
-            else if (renderType == "Plain text")
-            {
-                userInterface.Renderer = new MarkdigPlainTextRenderer();
-            }
 
             userInterface.InputText = "This is a single line!";
 
@@ -96,14 +78,6 @@ namespace UIImageTests
 
             userInterface.CurrentRenderType = renderType;
 
-            if (renderType == "AST")
-            {
-                userInterface.Renderer = new MarkdigASTRenderer();
-            }
-            else if (renderType == "Plain text")
-            {
-                userInterface.Renderer = new MarkdigPlainTextRenderer();
-            }
 
             userInterface.InputText = @"This is a single line!
 
@@ -125,15 +99,6 @@ This is a third line!";
             var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
 
             userInterface.CurrentRenderType = renderType;
-
-            if (renderType == "AST")
-            {
-                userInterface.Renderer = new MarkdigASTRenderer();
-            }
-            else if (renderType == "Plain text")
-            {
-                userInterface.Renderer = new MarkdigPlainTextRenderer();
-            }
 
             userInterface.InputText = @"List of things:
  - thing one
@@ -158,15 +123,6 @@ This is a third line!";
             var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
 
             userInterface.CurrentRenderType = renderType;
-
-            if (renderType == "AST")
-            {
-                userInterface.Renderer = new MarkdigASTRenderer();
-            }
-            else if (renderType == "Plain text")
-            {
-                userInterface.Renderer = new MarkdigPlainTextRenderer();
-            }
 
             userInterface.InputText = @"This is *italic* and this is **bold** and this is ***bold italic***!";
 

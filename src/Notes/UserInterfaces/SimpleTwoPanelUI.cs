@@ -29,8 +29,29 @@ namespace Notes.UserInterfaces
         private MarkdownDocument parsedMarkdown = Markdown.Parse("");
 
         // TODO: deduplicate these two properties
-        public string CurrentRenderType { get; set; }
-        public IMarkdigRenderer Renderer { get; set; }
+        private string _CurrentRenderType;
+        public string CurrentRenderType
+        {
+            get => _CurrentRenderType;
+            set
+            {
+                if (value == "AST")
+                {
+                    Renderer = new MarkdigASTRenderer();
+                }
+                else if (value == "Plain text")
+                {
+                    Renderer = new MarkdigPlainTextRenderer();
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid render type.", nameof(CurrentRenderType));
+                }
+
+                _CurrentRenderType = value;
+            }
+        }
+        private IMarkdigRenderer Renderer { get; set; }
 
         private bool lastEventWasCharFilter = false;
         private char lastCharFilterChar;
@@ -42,7 +63,6 @@ namespace Notes.UserInterfaces
         public SimpleTwoPanelUI(Sdl2Window window)
         {
             CurrentRenderType = "Plain text";
-            Renderer = new MarkdigPlainTextRenderer();
             _window = window;
         }
 
@@ -143,13 +163,11 @@ namespace Notes.UserInterfaces
 
                     if (ImGui.Selectable("AST", CurrentRenderType == "AST"))
                     {
-                        Renderer = new MarkdigASTRenderer();
                         CurrentRenderType = "AST";
                     }
 
                     if (ImGui.Selectable("Plain text", CurrentRenderType == "Plain text"))
                     {
-                        Renderer = new MarkdigPlainTextRenderer();
                         CurrentRenderType = "Plain text";
                     }
 
