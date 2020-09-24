@@ -76,6 +76,11 @@ namespace UIImageTests
             return Path.Combine(TestFilesRootDirectory, testSuiteName, "Reference", testName + ".png");
         }
 
+        public static string GetFailingOutputsFileForTest(string testSuiteName, string testName)
+        {
+            return Path.Combine(TestFilesRootDirectory, testSuiteName, "FailingOutput", testName + ".png");
+        }
+
         public static void DoTest(UIImageTestInfo testInfo)
         {
             testInfo.Window.SaveScreenToFile(testInfo.OutputFilePath);
@@ -87,12 +92,15 @@ namespace UIImageTests
 
                 if (ImagesAreEqual(referenceImage, outputImage))
                 {
+                    if (File.Exists(testInfo.DiffFilePath)) File.Delete(testInfo.DiffFilePath);
+                    if (File.Exists(testInfo.FailingOutputFilePath)) File.Delete(testInfo.FailingOutputFilePath);
                     Assert.Pass();
                 }
                 else
                 {
                     var diffImage = DiffImage(referenceImage, outputImage);
                     diffImage.SaveAsPng(testInfo.DiffFilePath);
+                    File.Copy(testInfo.OutputFilePath, testInfo.FailingOutputFilePath);
                     Assert.Fail("Output image is different from reference.");
                 }
             }

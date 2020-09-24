@@ -18,6 +18,8 @@ namespace UIImageTests
 
         public String DiffFilePath { get; private set; }
 
+        public String FailingOutputFilePath { get; private set; }
+
         public UIImageTestInfo(String testSuiteName, string testName, int windowWidth, int windowHeight)
         {
             FullTestName = $"{testName}_{windowWidth}x{windowHeight}";
@@ -26,6 +28,7 @@ namespace UIImageTests
             OutputFilePath = TestSupport.GetOutputFileForTest(testSuiteName, FullTestName);
             ReferenceFilePath = TestSupport.GetReferenceFileForTest(testSuiteName, FullTestName);
             DiffFilePath = TestSupport.GetDiffFileForTest(testSuiteName, FullTestName);
+            FailingOutputFilePath = TestSupport.GetFailingOutputsFileForTest(testSuiteName, FullTestName);
 
             EnsureTestDirectoriesExist();
         }
@@ -39,6 +42,7 @@ namespace UIImageTests
             if (!Directory.Exists(Path.GetDirectoryName(OutputFilePath))) Directory.CreateDirectory(Path.GetDirectoryName(OutputFilePath));
             if (!Directory.Exists(Path.GetDirectoryName(ReferenceFilePath))) Directory.CreateDirectory(Path.GetDirectoryName(ReferenceFilePath));
             if (!Directory.Exists(Path.GetDirectoryName(DiffFilePath))) Directory.CreateDirectory(Path.GetDirectoryName(DiffFilePath));
+            if (!Directory.Exists(Path.GetDirectoryName(FailingOutputFilePath))) Directory.CreateDirectory(Path.GetDirectoryName(FailingOutputFilePath));
         }
     }
 }

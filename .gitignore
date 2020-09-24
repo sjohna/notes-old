@@ -1,5 +1,6 @@
 src/UIImageTests/TestFiles/**/Output/**
 src/UIImageTests/TestFiles/**/Diff/**
+src/UIImageTests/TestFiles/**/FailingOutput/**
 
 *.swp
 *.*~
