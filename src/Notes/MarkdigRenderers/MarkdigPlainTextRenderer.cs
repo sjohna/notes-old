@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System;
 using System.Text;
 
 namespace Notes.MarkdigRenderers
@@ -8,16 +9,19 @@ namespace Notes.MarkdigRenderers
     public class MarkdigPlainTextRenderer : IMarkdigRenderer
     {
         private bool newLine;
-        private int listIndent;
+        private int textIndent; // text indent within current list level (list level is zero outside of lists)
+        private int listLevel;
         private bool firstBlock;
 
-        private int TextIndent => listIndent == 0 ? 0 : listIndent + 3;
+        private int ListIndent => Math.Max((listLevel - 1) * 2, 0); // this is a kludge. I don't think I should need to do a Max here...
+        private int TotalTextIndent => ListIndent + textIndent;
 
         public void Render(MarkdownDocument document)
         {
             newLine = false;
             firstBlock = true;
-            listIndent = 0;
+            textIndent = 0;
+            listLevel = 0;
 
             var spacing = ImGui.GetStyle().ItemSpacing;
             spacing.X = 0;
@@ -58,16 +62,20 @@ namespace Notes.MarkdigRenderers
 
         private void RenderBlock(ListItemBlock block)
         {
-            RenderNonWrappingText($"{new string(' ', listIndent)} - ");
-
+            listLevel += 1;                             // I find this whole thing kludgy. I need a better way of determining how to indent text...
+            textIndent = 0;
+            RenderNonWrappingText($" - ");
+            textIndent = 3;
             RenderBlock(block as ContainerBlock);
+            listLevel -= 1;
+
+            textIndent = 0;
         }
 
         private void RenderBlock(ListBlock block)
         {
-            listIndent += 2;
             RenderBlock(block as ContainerBlock);
-            listIndent -= 2;
+            
         }
 
         private void RenderBlock(ParagraphBlock block)
@@ -116,7 +124,7 @@ namespace Notes.MarkdigRenderers
 
             ImGui.NewLine();
             newLine = false;
-            RenderNonWrappingText(new string(' ', TextIndent));
+            RenderNonWrappingText(new string(' ', TotalTextIndent));
         }
 
         private void RenderInline(LineBreakInline inline)
