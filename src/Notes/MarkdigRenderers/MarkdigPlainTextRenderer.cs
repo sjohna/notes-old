@@ -53,6 +53,16 @@ namespace Notes.MarkdigRenderers
             ImGui.Text("ERROR: unrecognized block!");
         }
 
+        private void RenderBlock(ThematicBreakBlock block)
+        {
+            var windowWidth = ImGui.GetWindowSize().X;  // TODO: include padding in text area width, or make it a parameter
+            var dashWidth = ImGui.CalcTextSize("-").X;
+
+            int numDashes = (int)Math.Floor(windowWidth / dashWidth);
+
+            RenderNonWrappingText(new string('-', numDashes));
+        }
+
         private void RenderBlock(HeadingBlock block)
         {
             RenderNonWrappingText($"{new string('#', block.Level)} ");
@@ -137,7 +147,7 @@ namespace Notes.MarkdigRenderers
             // this line wrapping algorithm won't work in all cases, I think
             var lineBuilder = new StringBuilder();
 
-            var windowWidth = ImGui.GetWindowSize().X;
+            var windowWidth = ImGui.GetWindowSize().X;  // TODO: include padding in text area width, or make it a parameter
             var currentCursorX = ImGui.GetCursorPosX();
             var textExtent = currentCursorX + ImGui.CalcTextSize(text).X;
 
