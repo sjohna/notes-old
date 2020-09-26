@@ -2,6 +2,7 @@
 using Markdig;
 using Markdig.Syntax;
 using Notes.MarkdigRenderers;
+using Notes.Widgets;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -150,53 +151,38 @@ namespace Notes.UserInterfaces
 
         public unsafe void SubmitUI()
         {
+            ImGui.GetStyle().WindowRounding = 0;
+
+            ImGui.SetNextWindowPos(new Vector2(0, 0));
+            ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
+            ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
+
+            var renderTypeComboBox = new StringListComboBox("Render Type", new string[] { "AST", "Plain text" }, CurrentRenderType);
+            renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItem; };
+            renderTypeComboBox.Render();
+
+            var panelCursorY = ImGui.GetCursorPosY();
+
+            float paneHeight = ImGui.GetWindowSize().Y - panelCursorY - 8;  // TODO: parameterize this better...
+            float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
+
+            ImGui.BeginChild("Text area", new Vector2(paneWidth, paneHeight), true);
+
+            if (ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
             {
-                ImGui.GetStyle().WindowRounding = 0;
-
-                ImGui.SetNextWindowPos(new Vector2(0, 0));
-                ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
-                ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
-
-                // TODO: a better way to do combo boxes...
-                if (ImGui.BeginCombo("Render Type", CurrentRenderType))
-                {
-
-                    if (ImGui.Selectable("AST", CurrentRenderType == "AST"))
-                    {
-                        CurrentRenderType = "AST";
-                    }
-
-                    if (ImGui.Selectable("Plain text", CurrentRenderType == "Plain text"))
-                    {
-                        CurrentRenderType = "Plain text";
-                    }
-
-                    ImGui.EndCombo();
-                }
-
-                var panelCursorY = ImGui.GetCursorPosY();
-
-                float paneHeight = ImGui.GetWindowSize().Y - 16;
-                float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
-
-                ImGui.BeginChild("Text area", new Vector2(paneWidth, paneHeight), true);
-
-                if (ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
-                {
-                    parsedMarkdown = Markdown.Parse(inputText, pipeline);
-                }
-
-                ImGui.End();
-
-                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
-                ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
-
-                Renderer.Render(parsedMarkdown);
-
-                ImGui.End();
-
-                ImGui.End();
+                parsedMarkdown = Markdown.Parse(inputText, pipeline);
             }
+
+            ImGui.End();
+
+            ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
+            ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
+
+            Renderer.Render(parsedMarkdown);
+
+            ImGui.End();
+
+            ImGui.End();
         }
     }
 }
