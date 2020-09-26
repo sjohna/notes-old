@@ -12,6 +12,7 @@ namespace Notes.MarkdigRenderers
         private int textIndent; // text indent within current list level (list level is zero outside of lists)
         private int listLevel;
         private bool firstBlock;
+        private int quoteLevel;
 
         private int ListIndent => Math.Max((listLevel - 1) * 2, 0); // this is a kludge. I don't think I should need to do a Max here...
         private int TotalTextIndent => ListIndent + textIndent;
@@ -20,6 +21,7 @@ namespace Notes.MarkdigRenderers
         {
             newLine = false;
             firstBlock = true;
+            quoteLevel = 0;
             textIndent = 0;
             listLevel = 0;
 
@@ -51,6 +53,17 @@ namespace Notes.MarkdigRenderers
         private void RenderBlock(Block block)
         {
             ImGui.Text("ERROR: unrecognized block!");
+        }
+
+        private void RenderBlock(QuoteBlock block)
+        {
+            RenderNonWrappingText("> ");    // render caret for first line of quote. This should be handled in a different way...
+
+            quoteLevel += 1;
+            textIndent += 2;
+            RenderBlock(block as ContainerBlock);
+            textIndent -= 2;
+            quoteLevel -= 1;
         }
 
         private void RenderBlock(CodeBlock block)
@@ -148,7 +161,10 @@ namespace Notes.MarkdigRenderers
 
             ImGui.NewLine();
             newLine = false;
-            RenderNonWrappingText(new string(' ', TotalTextIndent));
+
+
+            for (int i = 0; i < quoteLevel; ++i) RenderNonWrappingText("> ");
+            RenderNonWrappingText(new string(' ', TotalTextIndent - 2*quoteLevel));
         }
 
         private void RenderInline(LineBreakInline inline)
