@@ -23,7 +23,7 @@ namespace UIImageTests
         public UIImageTestInfo(String testSuiteName, string testName, int windowWidth, int windowHeight)
         {
             FullTestName = $"{testName}_{windowWidth}x{windowHeight}";
-            Window = new Window(0, 0, windowWidth, windowHeight, "Notes");
+            Window = new Window(0, 0, windowWidth, windowHeight, "Notes", false);
 
             OutputFilePath = TestSupport.GetOutputFileForTest(testSuiteName, FullTestName);
             ReferenceFilePath = TestSupport.GetReferenceFileForTest(testSuiteName, FullTestName);

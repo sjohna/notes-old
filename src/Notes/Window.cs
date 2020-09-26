@@ -24,11 +24,10 @@ namespace Notes
 
         private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
 
-        public Window(int x, int y, int windowWidth, int windowHeight, string windowTitle)
+        public Window(int x, int y, int windowWidth, int windowHeight, string windowTitle, bool visible = true)
         {
-            // Create window, GraphicsDevice, and all resources necessary for the demo.
             VeldridStartup.CreateWindowAndGraphicsDevice(
-                new WindowCreateInfo(x, y, windowWidth, windowHeight, WindowState.Normal, windowTitle),
+                new WindowCreateInfo(x, y, windowWidth, windowHeight, visible ? WindowState.Normal : WindowState.Hidden, windowTitle),
                 new GraphicsDeviceOptions(true, null, true),
                 out _window,
                 out _gd);
