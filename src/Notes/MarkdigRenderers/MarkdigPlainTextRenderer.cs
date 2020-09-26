@@ -96,8 +96,15 @@ namespace Notes.MarkdigRenderers
         {
             listLevel += 1;                             // I find this whole thing kludgy. I need a better way of determining how to indent text...
             textIndent = 0;
-            RenderNonWrappingText($" - ");
-            textIndent = 3;
+
+            string listItemString;
+
+            if (block.Order == 0) listItemString = " - ";
+            else listItemString = $" {block.Order}. ";
+
+            RenderNonWrappingText(listItemString);
+            
+            textIndent = listItemString.Length;
             RenderBlock(block as ContainerBlock);
             listLevel -= 1;
 
