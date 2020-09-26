@@ -53,6 +53,15 @@ namespace Notes.MarkdigRenderers
             ImGui.Text("ERROR: unrecognized block!");
         }
 
+        private void RenderBlock(CodeBlock block)
+        {
+            foreach (var line in block.GetLines())
+            {
+                RenderNonWrappingText(line.ToString());
+                newLine = true;
+            }
+        }
+
         private void RenderBlock(ThematicBreakBlock block)
         {
             var windowWidth = ImGui.GetWindowSize().X;  // TODO: include padding in text area width, or make it a parameter
