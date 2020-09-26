@@ -131,6 +131,11 @@ namespace Notes.MarkdigRenderers
             }
         }
 
+        private void RenderInline(CodeInline inline)
+        {
+            RenderWrappingText(inline.Content);
+        }
+
         private void RenderInline(LeafInline inline)
         {
             RenderWrappingText(inline.ToString());
