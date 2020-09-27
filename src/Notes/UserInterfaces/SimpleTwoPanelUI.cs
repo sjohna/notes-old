@@ -30,10 +30,9 @@ namespace Notes.UserInterfaces
         private MarkdownDocument parsedMarkdown = Markdown.Parse("");
 
         // TODO: deduplicate these two properties
-        private string _CurrentRenderType;
         public string CurrentRenderType
         {
-            get => _CurrentRenderType;
+            get => renderTypeComboBox.CurrentSelection;
             set
             {
                 if (value == "AST")
@@ -49,7 +48,7 @@ namespace Notes.UserInterfaces
                     throw new ArgumentException("Invalid render type.", nameof(CurrentRenderType));
                 }
 
-                _CurrentRenderType = value;
+                renderTypeComboBox.CurrentSelection = value;
             }
         }
         private IMarkdigRenderer Renderer { get; set; }
@@ -59,12 +58,17 @@ namespace Notes.UserInterfaces
         private Sdl2Window _window;
         private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
 
+        private StringListComboBox renderTypeComboBox;
+
         // TODO: make the SubmitUI method take in the winodw, not the constructor
         // TODO: new interface: IWindowRenderer. Change UserInterface terminology to Renderer, differentiate between renderers for a whole window, and sub-renderers
         public SimpleTwoPanelUI(Sdl2Window window)
         {
-            CurrentRenderType = "Plain text";
             _window = window;
+
+            renderTypeComboBox = new StringListComboBox("Render Type", new string[] { "AST", "Plain text" }, "Plain text");
+            CurrentRenderType = "Plain text";   // super hacky. I should make the combo box widget support objects instead of strings
+            renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItem; };
         }
 
         unsafe void PrintCallbackData(ImGuiInputTextCallbackData* data)
@@ -157,8 +161,6 @@ namespace Notes.UserInterfaces
             ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
             ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 
-            var renderTypeComboBox = new StringListComboBox("Render Type", new string[] { "AST", "Plain text" }, CurrentRenderType);
-            renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItem; };
             renderTypeComboBox.Render();
 
             var panelCursorY = ImGui.GetCursorPosY();

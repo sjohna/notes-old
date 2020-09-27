@@ -9,7 +9,7 @@ namespace Notes.Widgets
     {
         public string Name { get; private set; }
 
-        public string CurrentSelection { get; private set; }
+        public string CurrentSelection { get; set; }
 
         private IEnumerable<string> options;
 
