@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Markdig;
 using Markdig.Syntax;
+using Notes.Core;
 using Notes.MarkdigRenderers;
 using Notes.Widgets;
 using System;
@@ -13,21 +14,7 @@ namespace Notes.UserInterfaces
 {
     public class SimpleTwoPanelUI : IUserInterface
     {
-        // TODO: will eventually need to handle dynamically resizing the buffer used for the input text area, maybe?
-        private string inputText = "";
-
-        // TODO: ensure that markdown is always parsed appropriately (i.e. with the right pipeline)
-        public string InputText 
-        {
-            get => inputText;
-            set
-            {
-                inputText = value;
-                parsedMarkdown = Markdown.Parse(inputText, pipeline);
-            }
-        }
-
-        private MarkdownDocument parsedMarkdown = Markdown.Parse("");
+        public Note Note = new Note();
 
         // TODO: deduplicate these two properties
         public string CurrentRenderType
@@ -56,11 +43,10 @@ namespace Notes.UserInterfaces
         private bool lastEventWasCharFilter = false;
         private char lastCharFilterChar;
         private Sdl2Window _window;
-        private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
 
         private StringListComboBox renderTypeComboBox;
 
-        // TODO: make the SubmitUI method take in the winodw, not the constructor
+        // TODO: make the SubmitUI method take in the window, not the constructor
         // TODO: new interface: IWindowRenderer. Change UserInterface terminology to Renderer, differentiate between renderers for a whole window, and sub-renderers
         public SimpleTwoPanelUI(Sdl2Window window)
         {
@@ -170,9 +156,9 @@ namespace Notes.UserInterfaces
 
             ImGui.BeginChild("Text area", new Vector2(paneWidth, paneHeight), true);
 
-            if (ImGui.InputTextMultiline("##Text area input", ref inputText, 1000000, new Vector2(paneWidth - 16, paneHeight - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
+            if (ImGui.InputTextMultiline("##Text area input", ref Note._Text, 1000000, new Vector2(paneWidth - 16, paneHeight - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
             {
-                parsedMarkdown = Markdown.Parse(inputText, pipeline);
+                Note.ParseMarkdown();
             }
 
             ImGui.End();
@@ -180,7 +166,7 @@ namespace Notes.UserInterfaces
             ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
             ImGui.BeginChild("Markdown area", new Vector2(paneWidth, paneHeight), true);
 
-            Renderer.Render(parsedMarkdown);
+            Renderer.Render(Note.Markdown);
 
             ImGui.End();
 

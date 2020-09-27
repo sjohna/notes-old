@@ -61,7 +61,7 @@ namespace UIImageTests
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = "This is a single line!";
+            userInterface.Note.Text = "This is a single line!";
 
             testInfo.Window.UserInterface = userInterface;
             DoTest(testInfo);
@@ -79,7 +79,7 @@ namespace UIImageTests
             userInterface.CurrentRenderType = renderType;
 
 
-            userInterface.InputText = @"This is a single line!
+            userInterface.Note.Text = @"This is a single line!
 
 This is another line!
 
@@ -100,7 +100,7 @@ This is a third line!";
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"List of things:
+            userInterface.Note.Text = @"List of things:
  - thing one
  - thing two
    - thing two a
@@ -124,7 +124,7 @@ This is a third line!";
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"This is *italic* and this is **bold** and this is ***bold italic***!";
+            userInterface.Note.Text = @"This is *italic* and this is **bold** and this is ***bold italic***!";
 
             testInfo.Window.UserInterface = userInterface;
             DoTest(testInfo);
@@ -141,7 +141,7 @@ This is a third line!";
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"# Heading One
+            userInterface.Note.Text = @"# Heading One
 ## Heading Two
 ### Heading Three
 #### Heading Four
@@ -169,7 +169,7 @@ Alternate Heading Two
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"Horizontal rules:
+            userInterface.Note.Text = @"Horizontal rules:
 
 ---
 
@@ -193,7 +193,7 @@ ___";
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"Block quotes:
+            userInterface.Note.Text = @"Block quotes:
 
 > Blockquotes can also be nested...
 >> ...by using additional greater-than signs right next to each other...
@@ -215,7 +215,7 @@ ___";
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"
+            userInterface.Note.Text = @"
 ## Code
 
 Inline `code`
@@ -260,7 +260,7 @@ var foo = function(bar) {
 
             userInterface.CurrentRenderType = renderType;
 
-            userInterface.InputText = @"
+            userInterface.Note.Text = @"
 Ordered
 
 1. Lorem ipsum dolor sit amet
