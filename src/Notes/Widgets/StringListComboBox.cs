@@ -22,7 +22,7 @@ namespace Notes.Widgets
             this.options = options;
         }
 
-        public void Render()
+        public void Render(float width, float height)
         {
             if (ImGui.BeginCombo(Name, CurrentSelection))
             {

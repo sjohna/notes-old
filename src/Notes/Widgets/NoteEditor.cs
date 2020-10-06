@@ -11,10 +11,6 @@ namespace Notes.Widgets
     {
         public Note Note { get; private set; }
 
-        public float Width { get; set; }
-
-        public float Height { get; set; }
-
         public string Name { get; private set; }
 
         private bool lastEventWasCharFilter = false;
@@ -26,11 +22,11 @@ namespace Notes.Widgets
             this.Note = note;
         }
 
-        public unsafe void Render()
+        public unsafe void Render(float width, float height)
         {
-            ImGui.BeginChild(Name, new Vector2(Width, Height), true);
+            ImGui.BeginChild(Name, new Vector2(width, height), true);
 
-            if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(Width - 16, Height - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
+            if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(width - 16, height - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
             {
                 Note.ParseMarkdown();
             }

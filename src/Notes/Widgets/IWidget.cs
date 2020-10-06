@@ -8,6 +8,6 @@ namespace Notes.Widgets
     {
         public string Name { get; }
 
-        public void Render();
+        public void Render(float width, float height);
     }
 }

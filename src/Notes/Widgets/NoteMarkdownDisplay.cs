@@ -17,19 +17,15 @@ namespace Notes.Widgets
         // TODO: refactor how I handle this
         public IMarkdigRenderer Renderer { get; set; }
 
-        public float Width { get; set; }
-
-        public float Height { get; set; }
-
         public NoteMarkdownDisplay(string name, Note note)
         {
             this.Name = name;
             this.Note = note;
         }
 
-        public void Render()
+        public void Render(float width, float height)
         {
-            ImGui.BeginChild(Name, new Vector2(Width, Height), true);
+            ImGui.BeginChild(Name, new Vector2(width, height), true);
 
             Renderer.Render(Note.Markdown);
 

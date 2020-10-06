@@ -68,24 +68,19 @@ namespace Notes.UserInterfaces
             ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
             ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 
-            renderTypeComboBox.Render();
+            // TODO: figure out a better way to handle widgets that don't care about size...
+            renderTypeComboBox.Render(-1,-1);
 
             var panelCursorY = ImGui.GetCursorPosY();
 
             float paneHeight = ImGui.GetWindowSize().Y - panelCursorY - 8;  // TODO: parameterize this better...
             float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
 
-            // TODO: figure out how to handle size parameterization better...
-            noteEditor.Width = paneWidth;
-            noteEditor.Height = paneHeight;
-            noteEditor.Render();
+            noteEditor.Render(paneWidth, paneHeight);
 
             ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
 
-            // TODO: figure out how to handle size parameterization better...
-            noteMarkdownDisplay.Width = paneWidth;
-            noteMarkdownDisplay.Height = paneHeight;
-            noteMarkdownDisplay.Render();
+            noteMarkdownDisplay.Render(paneWidth, paneHeight);
 
             ImGui.End();
         }
