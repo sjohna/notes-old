@@ -83,6 +83,10 @@ namespace UIImageTests
 
         public static void DoTest(UIImageTestInfo testInfo)
         {
+            if (File.Exists(testInfo.DiffFilePath)) File.Delete(testInfo.DiffFilePath);
+            if (File.Exists(testInfo.FailingOutputFilePath)) File.Delete(testInfo.FailingOutputFilePath);
+            if (File.Exists(testInfo.OutputFilePath)) File.Delete(testInfo.OutputFilePath);
+
             testInfo.Window.SaveScreenToFile(testInfo.OutputFilePath);
 
             if (File.Exists(testInfo.ReferenceFilePath))
@@ -92,8 +96,6 @@ namespace UIImageTests
 
                 if (ImagesAreEqual(referenceImage, outputImage))
                 {
-                    if (File.Exists(testInfo.DiffFilePath)) File.Delete(testInfo.DiffFilePath);
-                    if (File.Exists(testInfo.FailingOutputFilePath)) File.Delete(testInfo.FailingOutputFilePath);
                     Assert.Pass();
                 }
                 else

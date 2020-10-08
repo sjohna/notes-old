@@ -91,6 +91,26 @@ This is a third line!";
 
         [Test]
         [TestCaseSource(nameof(TestCaseParameters))]
+        public void LineBreaksInParagraphInInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(LineBreaksInParagraphInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+
+            userInterface.Note.Text = @"This is a line in a paragraph!
+This is another line in the same paragraph!
+This is a third line in the same paragraph!";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
         public void ListInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(ListInInputText)}_{renderType.Replace(" ", "")}Renderer";
@@ -275,6 +295,32 @@ Start numbering with offset:
 
 57. foo
 1. bar";
+
+            testInfo.Window.UserInterface = userInterface;
+            DoTest(testInfo);
+        }
+
+        // test case input text taken from example at https://markdown-it.github.io/
+        [Test]
+        [TestCaseSource(nameof(TestCaseParameters))]
+        public void NestedQuotesAndListsInInputText(string renderType, int windowWidth, int windowHeight)
+        {
+            var testName = $"{nameof(NestedQuotesAndListsInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+
+            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+
+            userInterface.CurrentRenderType = renderType;
+
+            userInterface.Note.Text = @"
+> test:
+> - stuff
+>   stuff and things
+>   and things and stuff
+>   > nested quote in the list item
+> - next list item
+>   > quote in the list item
+> > top level double quote";
 
             testInfo.Window.UserInterface = userInterface;
             DoTest(testInfo);

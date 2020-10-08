@@ -9,21 +9,14 @@ namespace Notes.MarkdigRenderers
     public class MarkdigPlainTextRenderer : IMarkdigRenderer
     {
         private bool newLine;
-        private int textIndent; // text indent within current list level (list level is zero outside of lists)
-        private int listLevel;
         private bool firstBlock;
-        private int quoteLevel;
-
-        private int ListIndent => Math.Max((listLevel - 1) * 2, 0); // this is a kludge. I don't think I should need to do a Max here...
-        private int TotalTextIndent => ListIndent + textIndent;
+        private bool atLineStart;
 
         public void Render(MarkdownDocument document)
         {
             newLine = false;
             firstBlock = true;
-            quoteLevel = 0;
-            textIndent = 0;
-            listLevel = 0;
+            atLineStart = false;
 
             var spacing = ImGui.GetStyle().ItemSpacing;
             spacing.X = 0;
@@ -37,7 +30,21 @@ namespace Notes.MarkdigRenderers
             ImGui.PopStyleVar(1);
         }
 
+        private void RenderTopLevelBlock(ListBlock block)
+        {
+            RenderTopLevelBlockCommon();
+
+            RenderBlock(block as dynamic, " ");
+        }
+
         private void RenderTopLevelBlock(Block block)
+        {
+            RenderTopLevelBlockCommon();
+
+            RenderBlock(block as dynamic, "");
+        }
+
+        private void RenderTopLevelBlockCommon()
         {
             if (!firstBlock)
             {
@@ -46,141 +53,140 @@ namespace Notes.MarkdigRenderers
             }
             firstBlock = false;
             newLine = false;
-
-            RenderBlock(block as dynamic);
+            atLineStart = true;
         }
 
-        private void RenderBlock(Block block)
+        private void RenderBlock(Block block, string lineIndent)
         {
             ImGui.Text("ERROR: unrecognized block!");
         }
 
-        private void RenderBlock(QuoteBlock block)
+        private void RenderBlock(QuoteBlock block, string lineIndent)
         {
-            RenderNonWrappingText("> ");    // render caret for first line of quote. This should be handled in a different way...
-
-            quoteLevel += 1;
-            textIndent += 2;
-            RenderBlock(block as ContainerBlock);
-            textIndent -= 2;
-            quoteLevel -= 1;
+            RenderBlock(block as ContainerBlock, lineIndent + "> ");
         }
 
-        private void RenderBlock(CodeBlock block)
+        private void RenderBlock(CodeBlock block, string lineIndent)
         {
             foreach (var line in block.GetLines())
             {
-                RenderNonWrappingText(line.ToString());
+                RenderNonWrappingText(line.ToString(), lineIndent);
                 newLine = true;
             }
         }
 
-        private void RenderBlock(ThematicBreakBlock block)
+        private void RenderBlock(ThematicBreakBlock block, string lineIndent)
         {
             var windowWidth = ImGui.GetWindowSize().X;  // TODO: include padding in text area width, or make it a parameter
             var dashWidth = ImGui.CalcTextSize("-").X;
 
             int numDashes = (int)Math.Floor(windowWidth / dashWidth);
 
-            RenderNonWrappingText(new string('-', numDashes));
+            RenderNonWrappingText(new string('-', numDashes), lineIndent);
         }
 
-        private void RenderBlock(HeadingBlock block)
+        private void RenderBlock(HeadingBlock block, string lineIndent)
         {
-            RenderNonWrappingText($"{new string('#', block.Level)} ");
+            RenderNonWrappingText($"{new string('#', block.Level)} ", lineIndent);
 
-            RenderBlock(block as LeafBlock);
+            RenderBlock(block as LeafBlock, lineIndent);
         }
 
-        private void RenderBlock(ListItemBlock block)
+        private void RenderBlock(ListItemBlock block, string lineIndent)
         {
-            listLevel += 1;                             // I find this whole thing kludgy. I need a better way of determining how to indent text...
-            textIndent = 0;
-
             string listItemString;
 
-            if (block.Order == 0) listItemString = " - ";
-            else listItemString = $" {block.Order}. ";
+            if (block.Order == 0) listItemString = "- ";
+            else listItemString = $"{block.Order}. ";
 
-            RenderNonWrappingText(listItemString);
+            RenderNonWrappingText(listItemString, lineIndent);
             
-            textIndent = listItemString.Length;
-            RenderBlock(block as ContainerBlock);
-            listLevel -= 1;
-
-            textIndent = 0;
+            RenderBlock(block as ContainerBlock, lineIndent + new string(' ', listItemString.Length));
         }
 
-        private void RenderBlock(ListBlock block)
+        private void RenderBlock(ListBlock block, string lineIndent)
         {
-            RenderBlock(block as ContainerBlock);
+            RenderBlock(block as ContainerBlock, lineIndent);
             
         }
 
-        private void RenderBlock(ParagraphBlock block)
+        private void RenderBlock(ParagraphBlock block, string lineIndent)
         {
-            RenderBlock(block as LeafBlock);
+            RenderBlock(block as LeafBlock, lineIndent);
 
             newLine = true;
         }
 
-        private void RenderBlock(ContainerBlock block)
+        private void RenderBlock(ContainerBlock block, string lineIndent)
         {
             foreach (var childBlock in block)
             {
-                RenderBlock(childBlock as dynamic);
+                RenderBlock(childBlock as dynamic, lineIndent);
             }
         }
 
-        private void RenderBlock(LeafBlock block)
+        private void RenderBlock(LeafBlock block, string lineIndent)
         {
             if (block.Inline == null) return;
-            RenderInline(block.Inline as dynamic);
+            RenderInline(block.Inline as dynamic, lineIndent);
         }
 
-        private void RenderInline(Inline inline)
+        private void RenderInline(Inline inline, string lineIndent)
         {
             ImGui.Text("ERROR: unrecognized inline!");
         }
 
-        private void RenderInline(ContainerInline inline)
+        private void RenderInline(ContainerInline inline, string lineIndent)
         {
             foreach (var childInline in inline)
             {
-                RenderInline(childInline as dynamic);
+                RenderInline(childInline as dynamic, lineIndent);
             }
         }
 
-        private void RenderInline(CodeInline inline)
+        private void RenderInline(CodeInline inline, string lineIndent)
         {
-            RenderWrappingText(inline.Content);
+            RenderWrappingText(inline.Content, lineIndent);
         }
 
-        private void RenderInline(LeafInline inline)
+        private void RenderInline(LeafInline inline, string lineIndent)
         {
-            RenderWrappingText(inline.ToString());
+            RenderWrappingText(inline.ToString(), lineIndent);
         }
 
         // Render a linebreak that occurs within a block, either due to a LineBreakInline in the markdown, or due to text wrapping
-        private void RenderLineBreakIfNecessary()
+        private void RenderLineBreakIfNecessary(string lineIndent)
         {
-            if (!newLine) return;
+            if (!newLine && !atLineStart) return;
 
-            ImGui.NewLine();
-            newLine = false;
-
-
-            for (int i = 0; i < quoteLevel; ++i) RenderNonWrappingText("> ");
-            RenderNonWrappingText(new string(' ', TotalTextIndent - 2*quoteLevel));
+            RenderLineBreak(lineIndent);
         }
 
-        private void RenderInline(LineBreakInline inline)
+        private void RenderLineBreak(string lineIndent)
+        {
+            if (newLine)
+            {
+                ImGui.NewLine();
+                newLine = false;
+                atLineStart = true;
+            }
+
+            if (atLineStart)
+            {
+                atLineStart = false;
+                RenderNonWrappingText(lineIndent, lineIndent); // TODO: oof
+            }
+        }
+
+        private void RenderInline(LineBreakInline inline, string lineIndent)
         {
             newLine = true;
         }
 
-        private void RenderWrappingText(string text)
+        private void RenderWrappingText(string text, string lineIndent)
         {
+            RenderLineBreakIfNecessary(lineIndent);   // ugly. Need to handle rendering newlines better...
+
             // this line wrapping algorithm won't work in all cases, I think
             var lineBuilder = new StringBuilder();
 
@@ -190,22 +196,23 @@ namespace Notes.MarkdigRenderers
 
             if (textExtent < windowWidth)
             {
-                RenderNonWrappingText(text);
+                RenderNonWrappingText(text, lineIndent);
                 return;
             }
 
             int searchIndex = text.Length - 1;
             int blankIndex = text.LastIndexOf(' ', searchIndex);
+            currentCursorX = ImGui.GetCursorPosX();
 
             while (blankIndex > 0)
             {
 
                 if (currentCursorX + ImGui.CalcTextSize(text.Substring(0,blankIndex)).X < windowWidth)
                 {
-                    RenderNonWrappingText(text.Substring(0,blankIndex).Trim());
+                    RenderNonWrappingText(text.Substring(0,blankIndex).Trim(), lineIndent);
                     newLine = true;
-                    RenderLineBreakIfNecessary();   // ugly. Need to handle rendering newlines better...
-                    RenderWrappingText(text.Substring(blankIndex).Trim());
+                    RenderLineBreakIfNecessary(lineIndent);   // ugly. Need to handle rendering newlines better...
+                    RenderWrappingText(text.Substring(blankIndex).Trim(), lineIndent);
                     return;
                 }
 
@@ -213,14 +220,15 @@ namespace Notes.MarkdigRenderers
                 blankIndex = text.LastIndexOf(' ', searchIndex);
             }
 
+            // TODO: handle this better: maybe we only need to render the first word on a line by itself, and can line break the rest in a better way
             // didn't find a place to break, so just render the whole line
-            RenderNonWrappingText(text);
+            RenderNonWrappingText(text, lineIndent);
         }
 
 
-        private void RenderNonWrappingText(string text)
+        private void RenderNonWrappingText(string text, string lineIndent)
         {
-            RenderLineBreakIfNecessary();
+            RenderLineBreakIfNecessary(lineIndent);
 
             ImGui.Text(text);
             ImGui.SameLine();
