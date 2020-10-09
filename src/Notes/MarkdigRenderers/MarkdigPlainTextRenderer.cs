@@ -8,15 +8,11 @@ namespace Notes.MarkdigRenderers
 {
     public class MarkdigPlainTextRenderer : IMarkdigRenderer
     {
-        private bool newLine;
-        private bool firstBlock;
         private bool atLineStart;
 
         public void Render(MarkdownDocument document)
         {
-            newLine = false;
-            firstBlock = true;
-            atLineStart = false;
+            atLineStart = true;
 
             var spacing = ImGui.GetStyle().ItemSpacing;
             spacing.X = 0;
@@ -32,28 +28,16 @@ namespace Notes.MarkdigRenderers
 
         private void RenderTopLevelBlock(ListBlock block)
         {
-            RenderTopLevelBlockCommon();
-
             RenderBlock(block as dynamic, " ");
+
+            RenderNewLine();    // TODO: deduplicate between this and the other overloads
         }
 
         private void RenderTopLevelBlock(Block block)
         {
-            RenderTopLevelBlockCommon();
-
             RenderBlock(block as dynamic, "");
-        }
 
-        private void RenderTopLevelBlockCommon()
-        {
-            if (!firstBlock)
-            {
-                ImGui.NewLine();
-                ImGui.NewLine();
-            }
-            firstBlock = false;
-            newLine = false;
-            atLineStart = true;
+            RenderNewLine();
         }
 
         private void RenderBlock(Block block, string lineIndent)
@@ -71,7 +55,7 @@ namespace Notes.MarkdigRenderers
             foreach (var line in block.GetLines())
             {
                 RenderNonWrappingText(line.ToString(), lineIndent);
-                newLine = true;
+                RenderNewLine();
             }
         }
 
@@ -83,6 +67,8 @@ namespace Notes.MarkdigRenderers
             int numDashes = (int)Math.Floor(windowWidth / dashWidth);
 
             RenderNonWrappingText(new string('-', numDashes), lineIndent);
+
+            RenderNewLine();
         }
 
         private void RenderBlock(HeadingBlock block, string lineIndent)
@@ -90,6 +76,8 @@ namespace Notes.MarkdigRenderers
             RenderNonWrappingText($"{new string('#', block.Level)} ", lineIndent);
 
             RenderBlock(block as LeafBlock, lineIndent);
+
+            RenderNewLine();
         }
 
         private void RenderBlock(ListItemBlock block, string lineIndent)
@@ -113,7 +101,7 @@ namespace Notes.MarkdigRenderers
         {
             RenderBlock(block as LeafBlock, lineIndent);
 
-            newLine = true;
+            RenderNewLine();
         }
 
         private void RenderBlock(ContainerBlock block, string lineIndent)
@@ -160,22 +148,8 @@ namespace Notes.MarkdigRenderers
         }
 
         // Render a linebreak that occurs within a block, either due to a LineBreakInline in the markdown, or due to text wrapping
-        private void RenderLineBreakIfNecessary(string lineIndent)
+        private void RenderLineIndentIfNecessary(string lineIndent)
         {
-            if (!newLine && !atLineStart) return;
-
-            RenderLineBreak(lineIndent);
-        }
-
-        private void RenderLineBreak(string lineIndent)
-        {
-            if (newLine)
-            {
-                ImGui.NewLine();
-                newLine = false;
-                atLineStart = true;
-            }
-
             if (atLineStart)
             {
                 atLineStart = false;
@@ -185,18 +159,14 @@ namespace Notes.MarkdigRenderers
 
         private void RenderInline(LineBreakInline inline, string lineIndent)
         {
-            ImGui.NewLine();
-
-            atLineStart = true;
+            RenderNewLine();
         }
 
         private void RenderWrappingText(string text, string lineIndent)
         {
-            RenderLineBreakIfNecessary(lineIndent);   // ugly. Need to handle rendering newlines better...
+            RenderLineIndentIfNecessary(lineIndent);   // ugly. Need to handle rendering newlines better...
 
             // this line wrapping algorithm won't work in all cases, I think
-            var lineBuilder = new StringBuilder();
-
             var windowWidth = ImGui.GetWindowSize().X;  // TODO: include padding in text area width, or make it a parameter
                                                         // TODO: make width calculation aware of whether there is a scrollbar
             var currentCursorX = ImGui.GetCursorPosX();
@@ -214,12 +184,10 @@ namespace Notes.MarkdigRenderers
 
             while (blankIndex > 0)
             {
-
                 if (currentCursorX + ImGui.CalcTextSize(text.Substring(0,blankIndex)).X < windowWidth)
                 {
                     RenderNonWrappingText(text.Substring(0,blankIndex).Trim(), lineIndent);
-                    newLine = true;
-                    RenderLineBreakIfNecessary(lineIndent);   // ugly. Need to handle rendering newlines better...
+                    RenderNewLine();
                     RenderWrappingText(text.Substring(blankIndex).Trim(), lineIndent);
                     return;
                 }
@@ -229,7 +197,6 @@ namespace Notes.MarkdigRenderers
             }
 
             // TODO: handle this better: maybe we only need to render the first word on a line by itself, and can line break the rest in a better way
-
             // didn't find a place to break, so just render the whole line
             RenderNonWrappingText(text, lineIndent);
         }
@@ -237,7 +204,7 @@ namespace Notes.MarkdigRenderers
 
         private void RenderNonWrappingText(string text, string lineIndent)
         {
-            RenderLineBreakIfNecessary(lineIndent);
+            RenderLineIndentIfNecessary(lineIndent);
 
             RenderText(text);
         }
