@@ -107,7 +107,6 @@ namespace Notes.MarkdigRenderers
         private void RenderBlock(ListBlock block, string lineIndent)
         {
             RenderBlock(block as ContainerBlock, lineIndent);
-            
         }
 
         private void RenderBlock(ParagraphBlock block, string lineIndent)
@@ -154,6 +153,12 @@ namespace Notes.MarkdigRenderers
             RenderWrappingText(inline.ToString(), lineIndent);
         }
 
+        private void RenderNewLine()
+        {
+            ImGui.NewLine();
+            atLineStart = true;
+        }
+
         // Render a linebreak that occurs within a block, either due to a LineBreakInline in the markdown, or due to text wrapping
         private void RenderLineBreakIfNecessary(string lineIndent)
         {
@@ -174,13 +179,15 @@ namespace Notes.MarkdigRenderers
             if (atLineStart)
             {
                 atLineStart = false;
-                RenderNonWrappingText(lineIndent, lineIndent); // TODO: oof
+                RenderText(lineIndent);
             }
         }
 
         private void RenderInline(LineBreakInline inline, string lineIndent)
         {
-            newLine = true;
+            ImGui.NewLine();
+
+            atLineStart = true;
         }
 
         private void RenderWrappingText(string text, string lineIndent)
@@ -191,6 +198,7 @@ namespace Notes.MarkdigRenderers
             var lineBuilder = new StringBuilder();
 
             var windowWidth = ImGui.GetWindowSize().X;  // TODO: include padding in text area width, or make it a parameter
+                                                        // TODO: make width calculation aware of whether there is a scrollbar
             var currentCursorX = ImGui.GetCursorPosX();
             var textExtent = currentCursorX + ImGui.CalcTextSize(text).X;
 
@@ -221,6 +229,7 @@ namespace Notes.MarkdigRenderers
             }
 
             // TODO: handle this better: maybe we only need to render the first word on a line by itself, and can line break the rest in a better way
+
             // didn't find a place to break, so just render the whole line
             RenderNonWrappingText(text, lineIndent);
         }
@@ -230,6 +239,11 @@ namespace Notes.MarkdigRenderers
         {
             RenderLineBreakIfNecessary(lineIndent);
 
+            RenderText(text);
+        }
+
+        private void RenderText(string text)
+        {
             ImGui.Text(text);
             ImGui.SameLine();
         }
