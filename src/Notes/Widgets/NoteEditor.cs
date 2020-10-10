@@ -74,10 +74,15 @@ namespace Notes.Widgets
 
             if (dataPtr.EventFlag == ImGuiInputTextFlags.CallbackAlways && lastEventWasCharFilter)
             {
-                PrintCallbackData(data);
+                lastEventWasCharFilter = false;
 
                 if (lastCharFilterChar == '\n')
                 {
+                    if (ImGui.GetIO().KeyShift) // on shift+newline, don't do anything fancy
+                    {
+                        return 0;
+                    }
+
                     var stringInBuffer = Encoding.UTF8.GetString((byte*)dataPtr.Buf, dataPtr.BufTextLen);
 
                     string previousLine = ExtractInputTextLine(stringInBuffer, dataPtr.CursorPos - 1);
@@ -86,7 +91,6 @@ namespace Notes.Widgets
                     {
                         dataPtr.DeleteChars(dataPtr.CursorPos - previousLine.Length - 1, previousLine.Length);
 
-                        lastEventWasCharFilter = false;
                         return 1;
                     }
                     if (previousLine.Trim() != "")
@@ -106,12 +110,9 @@ namespace Notes.Widgets
 
                         dataPtr.InsertChars(dataPtr.CursorPos, newInputTextBuilder.ToString());
 
-                        lastEventWasCharFilter = false;
                         return 1;
                     }
                 }
-
-                lastEventWasCharFilter = false;
             }
 
             return 0;
