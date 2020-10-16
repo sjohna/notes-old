@@ -26,7 +26,7 @@ namespace Notes.Widgets
         {
             ImGui.BeginChild(Name, new Vector2(width, height), true);
 
-            if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(width - 16, height - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways, textBoxCallback))
+            if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(width - 16, height - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.AllowTabInput, textBoxCallback))
             {
                 Note.ParseMarkdown();
             }
@@ -69,11 +69,15 @@ namespace Notes.Widgets
                 PrintCallbackData(data);
                 lastEventWasCharFilter = true;
                 lastCharFilterChar = Encoding.UTF8.GetString(BitConverter.GetBytes(data->EventChar))[0];
+
+                if (lastCharFilterChar == '\t') return 1;
+
                 return 0;
             }
 
             if (dataPtr.EventFlag == ImGuiInputTextFlags.CallbackAlways && lastEventWasCharFilter)
             {
+                PrintCallbackData(data);
                 lastEventWasCharFilter = false;
 
                 if (lastCharFilterChar == '\n')
@@ -113,9 +117,50 @@ namespace Notes.Widgets
                         return 1;
                     }
                 }
+                else if (lastCharFilterChar == '\t')
+                {
+                    var stringInBuffer = Encoding.UTF8.GetString((byte*)dataPtr.Buf, dataPtr.BufTextLen);
+
+                    var currentLine = ExtractLine(stringInBuffer, dataPtr.CursorPos-1);
+
+                    if (currentLine.CursorIndexInLine % 2 == 0)
+                    {
+                        dataPtr.InsertChars(dataPtr.CursorPos, "  ");
+                    }
+                    else
+                    {
+                        dataPtr.InsertChars(dataPtr.CursorPos, " ");
+                    }
+                }
             }
 
             return 0;
+        }
+
+        private (string Line, int CursorIndexInLine) ExtractLine(string stringInBuffer, int location)
+        {
+            var builder = new StringBuilder();
+
+            int index = location;
+
+            // TODO: I think I can do this better, with substring
+            while (index >= 0 && index < stringInBuffer.Length && stringInBuffer[index] != '\n')
+            {
+                builder.Insert(0, stringInBuffer[index]);
+                --index;
+            }
+
+            int CursorIndexInLine = builder.Length;
+
+            index = location + 1;
+
+            while (index >= 0 && index < stringInBuffer.Length && stringInBuffer[index] != '\n')
+            {
+                builder.Append(stringInBuffer[index]);
+                ++index;
+            }
+
+            return (builder.ToString(), CursorIndexInLine);
         }
     }
 }
