@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static UIImageTests.TestSupport;
 using Notes.MarkdigRenderers;
 
 namespace UIImageTests
@@ -16,6 +15,20 @@ namespace UIImageTests
     public class TestSimpleTwoPanelUI
     {
         private UIImageTestInfo testInfo;
+
+        private TestSupport testSupport;
+
+        [OneTimeSetUp]
+        public void SetUpFixture()
+        {
+            testSupport = new TestSupport();
+        }
+
+        [OneTimeTearDown]
+        public void TearDownFixture()
+        {
+            testSupport.Dispose();
+        }
 
         [TearDown]
         public void TearDown()
@@ -40,14 +53,14 @@ namespace UIImageTests
         public void EmptyInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(EmptyInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -55,7 +68,7 @@ namespace UIImageTests
         public void SingleLineInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(SingleLineInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -64,7 +77,7 @@ namespace UIImageTests
             userInterface.Note.Text = "This is a single line!";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -72,7 +85,7 @@ namespace UIImageTests
         public void MultipleParagraphInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(MultipleParagraphInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -86,7 +99,7 @@ This is another line!
 This is a third line!";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -94,7 +107,7 @@ This is a third line!";
         public void LineBreaksInParagraphInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(LineBreaksInParagraphInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -106,7 +119,7 @@ This is another line in the same paragraph!
 This is a third line in the same paragraph!";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -114,7 +127,7 @@ This is a third line in the same paragraph!";
         public void ListInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(ListInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -130,7 +143,7 @@ This is a third line in the same paragraph!";
      - thing three a one";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -138,7 +151,7 @@ This is a third line in the same paragraph!";
         public void BoldAndItalicInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(BoldAndItalicInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -147,7 +160,7 @@ This is a third line in the same paragraph!";
             userInterface.Note.Text = @"This is *italic* and this is **bold** and this is ***bold italic***!";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -155,7 +168,7 @@ This is a third line in the same paragraph!";
         public void HeadingsInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(HeadingsInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -175,7 +188,7 @@ Alternate Heading Two
 ---------------------";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         [Test]
@@ -183,7 +196,7 @@ Alternate Heading Two
         public void HorizontalRulesInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(HorizontalRulesInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -198,7 +211,7 @@ Alternate Heading Two
 ___";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         // test case input text taken from example at https://markdown-it.github.io/
@@ -207,7 +220,7 @@ ___";
         public void BlockQuotesInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(BlockQuotesInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -220,7 +233,7 @@ ___";
 > > > ...or with spaces between arrows.";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         // test case input text taken from example at https://markdown-it.github.io/
@@ -229,7 +242,7 @@ ___";
         public void CodeInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(CodeInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -265,7 +278,7 @@ var foo = function(bar) {
 ```";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         // test case input text taken from example at https://markdown-it.github.io/
@@ -274,7 +287,7 @@ var foo = function(bar) {
         public void OrderedListsInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(OrderedListsInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -297,7 +310,7 @@ Start numbering with offset:
 1. bar";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
 
         // test case input text taken from example at https://markdown-it.github.io/
@@ -306,7 +319,7 @@ Start numbering with offset:
         public void NestedQuotesAndListsInInputText(string renderType, int windowWidth, int windowHeight)
         {
             var testName = $"{nameof(NestedQuotesAndListsInInputText)}_{renderType.Replace(" ", "")}Renderer";
-            testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
+            testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
             var userInterface = new SimpleTwoPanelUI();
 
@@ -323,7 +336,7 @@ Start numbering with offset:
 > > top level double quote";
 
             testInfo.Window.UserInterface = userInterface;
-            DoTest(testInfo);
+            testSupport.DoTest(testInfo);
         }
     }
 }

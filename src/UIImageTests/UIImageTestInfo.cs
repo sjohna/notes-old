@@ -20,15 +20,15 @@ namespace UIImageTests
 
         public String FailingOutputFilePath { get; private set; }
 
-        public UIImageTestInfo(String testSuiteName, string testName, int windowWidth, int windowHeight)
+        public UIImageTestInfo(String testSuiteName, string testName, int windowWidth, int windowHeight, Window window)
         {
             FullTestName = $"{testName}_{windowWidth}x{windowHeight}";
-            Window = new Window(0, 0, windowWidth, windowHeight, "Notes", false);
+            this.Window = window;
 
             OutputFilePath = TestSupport.GetOutputFileForTest(testSuiteName, FullTestName);
             ReferenceFilePath = TestSupport.GetReferenceFileForTest(testSuiteName, FullTestName);
             DiffFilePath = TestSupport.GetDiffFileForTest(testSuiteName, FullTestName);
-            FailingOutputFilePath = TestSupport.GetFailingOutputsFileForTest(testSuiteName, FullTestName);
+            FailingOutputFilePath = TestSupport.GetFailingOutputFileForTest(testSuiteName, FullTestName);
 
             EnsureTestDirectoriesExist();
         }

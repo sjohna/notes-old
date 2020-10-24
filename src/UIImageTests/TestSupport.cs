@@ -9,11 +9,11 @@ using System.Text;
 
 namespace UIImageTests
 {
-    public static class TestSupport
+    public class TestSupport : IDisposable
     {
         public static string TestFilesRootDirectory = "../../../TestFiles";
 
-        public static bool ImagesAreEqual(Image<Rgba32> image1, Image<Rgba32> image2)
+        public bool ImagesAreEqual(Image<Rgba32> image1, Image<Rgba32> image2)
         {
             if (image1.Height != image2.Height || image1.Width != image2.Width)
             {
@@ -34,7 +34,7 @@ namespace UIImageTests
             return true;
         }
 
-        public static Image<Rgba32> DiffImage(Image<Rgba32> image1, Image<Rgba32> image2)
+        public Image<Rgba32> DiffImage(Image<Rgba32> image1, Image<Rgba32> image2)
         {
             if (image1.Height != image2.Height || image1.Width != image2.Width)
             {
@@ -76,12 +76,12 @@ namespace UIImageTests
             return Path.Combine(TestFilesRootDirectory, testSuiteName, "Reference", testName + ".png");
         }
 
-        public static string GetFailingOutputsFileForTest(string testSuiteName, string testName)
+        public static string GetFailingOutputFileForTest(string testSuiteName, string testName)
         {
             return Path.Combine(TestFilesRootDirectory, testSuiteName, "FailingOutput", testName + ".png");
         }
 
-        public static void DoTest(UIImageTestInfo testInfo)
+        public void DoTest(UIImageTestInfo testInfo)
         {
             if (File.Exists(testInfo.DiffFilePath)) File.Delete(testInfo.DiffFilePath);
             if (File.Exists(testInfo.FailingOutputFilePath)) File.Delete(testInfo.FailingOutputFilePath);
@@ -110,6 +110,26 @@ namespace UIImageTests
             {
                 Assert.Inconclusive("No reference image for test.");
             }
+        }
+
+        //private Dictionary<(int width, int height), Window> windowCache = new Dictionary<(int width, int height), Window>();
+
+        public UIImageTestInfo CreateTestInfo(String testSuiteName, string testName, int windowWidth, int windowHeight)
+        {
+            //if (!windowCache.ContainsKey((windowWidth, windowHeight)))
+            //{
+            //    windowCache[(windowWidth, windowHeight)] = new Window(0, 0, windowWidth, windowHeight, "Notes", false);
+            //}
+
+            return new UIImageTestInfo(testSuiteName, testName, windowWidth, windowHeight, new Window(0, 0, windowWidth, windowHeight, "Notes", false));
+        }
+
+        public void Dispose()
+        {
+            //foreach (var window in windowCache)
+            //{
+            //    window.Value.Dispose();
+            //}
         }
     }
 }
