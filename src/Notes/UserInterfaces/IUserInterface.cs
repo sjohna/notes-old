@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Veldrid.Sdl2;
 
 namespace Notes.UserInterfaces
 {
     public interface IUserInterface
     {
-        void SubmitUI();
+        void SubmitUI(Sdl2Window window);
     }
 }

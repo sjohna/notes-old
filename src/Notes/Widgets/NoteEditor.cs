@@ -15,6 +15,7 @@ namespace Notes.Widgets
 
         private bool lastEventWasCharFilter = false;
         private char lastCharFilterChar;
+        private bool _setKeyboardFocus = false;
 
         public NoteEditor(string name, Note note)
         {
@@ -29,6 +30,12 @@ namespace Notes.Widgets
             if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(width - 16, height - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.AllowTabInput, textBoxCallback))
             {
                 Note.ParseMarkdown();
+            }
+
+            if (_setKeyboardFocus)
+            {
+                ImGui.SetKeyboardFocusHere(-1);
+                _setKeyboardFocus = false;  // is this too much of a hack?
             }
 
             ImGui.End();
@@ -161,6 +168,11 @@ namespace Notes.Widgets
             }
 
             return (builder.ToString(), CursorIndexInLine);
+        }
+
+        public void SetKeyboardFocus()
+        {
+            this._setKeyboardFocus = true;
         }
     }
 }

@@ -39,18 +39,14 @@ namespace Notes.UserInterfaces
             }
         }
 
-        private Sdl2Window _window;
-
         private StringListComboBox renderTypeComboBox;
         private NoteMarkdownDisplay noteMarkdownDisplay;
         private NoteEditor noteEditor;
 
         // TODO: make the SubmitUI method take in the window, not the constructor
         // TODO: new interface: IWindowRenderer. Change UserInterface terminology to Renderer, differentiate between renderers for a whole window, and sub-renderers
-        public SimpleTwoPanelUI(Sdl2Window window)
+        public SimpleTwoPanelUI()
         {
-            _window = window;
-
             noteMarkdownDisplay = new NoteMarkdownDisplay("Markdown area", Note);
 
             noteEditor = new NoteEditor("Text area", Note);
@@ -60,7 +56,7 @@ namespace Notes.UserInterfaces
             renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItem; };
         }
 
-        public unsafe void SubmitUI()
+        public unsafe void SubmitUI(Sdl2Window _window)
         {
             ImGui.GetStyle().WindowRounding = 0;
 
@@ -83,6 +79,11 @@ namespace Notes.UserInterfaces
             noteMarkdownDisplay.Render(paneWidth, paneHeight);
 
             ImGui.End();
+        }
+
+        public void SetNoteEditorKeyboardFocus()
+        {
+            noteEditor.SetKeyboardFocus();
         }
     }
 }

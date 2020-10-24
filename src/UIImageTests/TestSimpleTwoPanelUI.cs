@@ -42,7 +42,7 @@ namespace UIImageTests
             var testName = $"{nameof(EmptyInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -57,7 +57,7 @@ namespace UIImageTests
             var testName = $"{nameof(SingleLineInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -74,7 +74,7 @@ namespace UIImageTests
             var testName = $"{nameof(MultipleParagraphInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -96,7 +96,7 @@ This is a third line!";
             var testName = $"{nameof(LineBreaksInParagraphInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -116,7 +116,7 @@ This is a third line in the same paragraph!";
             var testName = $"{nameof(ListInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -140,7 +140,7 @@ This is a third line in the same paragraph!";
             var testName = $"{nameof(BoldAndItalicInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -157,7 +157,7 @@ This is a third line in the same paragraph!";
             var testName = $"{nameof(HeadingsInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -185,7 +185,7 @@ Alternate Heading Two
             var testName = $"{nameof(HorizontalRulesInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -209,7 +209,7 @@ ___";
             var testName = $"{nameof(BlockQuotesInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -231,7 +231,7 @@ ___";
             var testName = $"{nameof(CodeInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -276,7 +276,7 @@ var foo = function(bar) {
             var testName = $"{nameof(OrderedListsInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 
@@ -308,7 +308,7 @@ Start numbering with offset:
             var testName = $"{nameof(NestedQuotesAndListsInInputText)}_{renderType.Replace(" ", "")}Renderer";
             testInfo = new UIImageTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI(testInfo.Window.SDLWindow);
+            var userInterface = new SimpleTwoPanelUI();
 
             userInterface.CurrentRenderType = renderType;
 

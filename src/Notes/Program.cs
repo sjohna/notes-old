@@ -15,7 +15,8 @@ namespace Notes
         {
             using (var window = new Notes.Window(50,50,1280,800,"Notes"))
             {
-                var userInterface = new SimpleTwoPanelUI(window.SDLWindow);
+                var userInterface = new SimpleTwoPanelUI();
+                userInterface.SetNoteEditorKeyboardFocus();
                 window.UserInterface = userInterface;
                 window.MainLoop();
             }
