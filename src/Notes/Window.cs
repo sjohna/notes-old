@@ -45,8 +45,20 @@ namespace Notes
             while (_window.Exists)
             {
                 InputSnapshot snapshot = _window.PumpEvents();
+
+
+                if (snapshot.KeyEvents.Count > 0)
+                {
+                    Console.WriteLine("------------------------------");
+
+                    foreach (var keyEvent in snapshot.KeyEvents)
+                    {
+                        Console.WriteLine($"{keyEvent.Key}, {keyEvent.Modifiers}, {keyEvent.Down}");
+                    }
+                }
+
                 if (!_window.Exists) { break; }
-                RenderFrame(snapshot);
+                RenderFrame(1f / 60f, snapshot);
             }
         }
 
@@ -55,9 +67,9 @@ namespace Notes
             _controller.Update(1f / 60f, snapshot);
         }
 
-        public void RenderFrame(InputSnapshot inputEvents)
+        public void RenderFrame(float deltaSeconds, InputSnapshot inputEvents)
         {
-            _controller.Update(1f / 60f, inputEvents); // Feed the input events to our ImGui controller, which passes them through to ImGui.
+            _controller.Update(deltaSeconds, inputEvents); // Feed the input events to our ImGui controller, which passes them through to ImGui.
 
             UserInterface.SubmitUI(_window);
 

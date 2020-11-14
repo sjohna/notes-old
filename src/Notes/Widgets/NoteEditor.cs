@@ -44,6 +44,8 @@ namespace Notes.Widgets
 
         unsafe void PrintCallbackData(ImGuiInputTextCallbackData* data)
         {
+            return;
+
             Console.WriteLine($"Callback event: {data->EventFlag.ToString()}");
             Console.WriteLine($"  BufDirty: {data->BufDirty}");
             Console.WriteLine($"  BufSize: {data->BufSize}");
