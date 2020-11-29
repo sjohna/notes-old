@@ -43,6 +43,11 @@ namespace Notes.UserInterfaces
         private NoteMarkdownDisplay noteMarkdownDisplay;
         private NoteEditor noteEditor;
 
+        private float leftPanelProportion = 0.50f;
+
+        private bool isDragging = false;
+        private Vector2 initialDragLocation;
+
         // TODO: make the SubmitUI method take in the window, not the constructor
         // TODO: new interface: IWindowRenderer. Change UserInterface terminology to Renderer, differentiate between renderers for a whole window, and sub-renderers
         public SimpleTwoPanelUI()
@@ -67,14 +72,43 @@ namespace Notes.UserInterfaces
             // TODO: figure out a better way to handle widgets that don't care about size...
             renderTypeComboBox.Render(-1,-1);
 
+            // set cursor if it's close to the middle
+
+            if (Math.Abs(ImGui.GetMousePos().X - (ImGui.GetWindowSize().X * leftPanelProportion)) <= 4)
+            {
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                {
+                    isDragging = true;
+                    initialDragLocation = ImGui.GetMousePos();
+                }
+            }
+
+            if (isDragging && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+            {
+                isDragging = false;
+            }
+
+            if (isDragging)
+            {
+                float dragToX = initialDragLocation.X + ImGui.GetMouseDragDelta().X;
+
+                leftPanelProportion = dragToX / ImGui.GetWindowSize().X;
+
+                if (leftPanelProportion < 0) leftPanelProportion = 0;
+                if (leftPanelProportion > 1) leftPanelProportion = 1;
+            }
+
             var panelCursorY = ImGui.GetCursorPosY();
 
             float paneHeight = ImGui.GetWindowSize().Y - panelCursorY - 8;  // TODO: parameterize this better...
-            float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
+            //float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
+            float paneWidth = (ImGui.GetWindowSize().X * leftPanelProportion) - 12; 
 
             noteEditor.Render(paneWidth, paneHeight);
 
-            ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X / 2 + 4, panelCursorY));
+            ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X * leftPanelProportion + 4, panelCursorY));
+
+            paneWidth = (ImGui.GetWindowSize().X * (1-leftPanelProportion)) - 12;
 
             noteMarkdownDisplay.Render(paneWidth, paneHeight);
 

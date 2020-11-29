@@ -46,17 +46,6 @@ namespace Notes
             {
                 InputSnapshot snapshot = _window.PumpEvents();
 
-
-                if (snapshot.KeyEvents.Count > 0)
-                {
-                    Console.WriteLine("------------------------------");
-
-                    foreach (var keyEvent in snapshot.KeyEvents)
-                    {
-                        Console.WriteLine($"{keyEvent.Key}, {keyEvent.Modifiers}, {keyEvent.Down}");
-                    }
-                }
-
                 if (!_window.Exists) { break; }
                 RenderFrame(1f / 60f, snapshot);
             }
