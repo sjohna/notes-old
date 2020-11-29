@@ -67,7 +67,7 @@ namespace UIInputTests
         }
 
         [Test]
-        public void InputNewlinesRespectIndentation()
+        public void InputEnterRespectsIndentation()
         {
             var window = new Window(0, 0, 100, 100, "Test", false);
             var userInterface = new SimpleTwoPanelUI();
@@ -102,6 +102,93 @@ namespace UIInputTests
             window.RenderFrame(time, snapshot);
 
             Assert.AreEqual("  asdf\n  asdf", userInterface.Note.Text);
+
+            window.Dispose();
+        }
+
+        [Test]
+        public void InputShiftEnterDoesNotIndent()
+        {
+            var window = new Window(0, 0, 100, 100, "Test", false);
+            var userInterface = new SimpleTwoPanelUI();
+
+            window.UserInterface = userInterface;
+            userInterface.SetNoteEditorKeyboardFocus();
+
+            float time = 1f / 60f;
+
+            window.RenderFrame(time, new InputSnapshotForTests());
+
+            var snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyCharPress(' '); snapshot.AddKeyEvent(new KeyEvent(Key.Space, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress(' '); snapshot.AddKeyEvent(new KeyEvent(Key.Space, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('a'); snapshot.AddKeyEvent(new KeyEvent(Key.A, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('s'); snapshot.AddKeyEvent(new KeyEvent(Key.S, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('d'); snapshot.AddKeyEvent(new KeyEvent(Key.D, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('f'); snapshot.AddKeyEvent(new KeyEvent(Key.F, true, ModifierKeys.None));
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyEvent(new KeyEvent(Key.Enter, true, ModifierKeys.None)); // no KeyCharPress on newline, just key event for enter
+            snapshot.AddKeyEvent(new KeyEvent(Key.ShiftLeft, true, ModifierKeys.None));
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+            snapshot.AddKeyEvent(new KeyEvent(Key.Enter, false, ModifierKeys.None)); // no KeyCharPress on newline, just key event for enter
+            snapshot.AddKeyEvent(new KeyEvent(Key.ShiftLeft, false, ModifierKeys.None));
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyCharPress('a'); snapshot.AddKeyEvent(new KeyEvent(Key.A, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('s'); snapshot.AddKeyEvent(new KeyEvent(Key.S, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('d'); snapshot.AddKeyEvent(new KeyEvent(Key.D, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('f'); snapshot.AddKeyEvent(new KeyEvent(Key.F, true, ModifierKeys.None));
+
+            window.RenderFrame(time, snapshot);
+
+            Assert.AreEqual("  asdf\nasdf", userInterface.Note.Text);
+
+            window.Dispose();
+        }
+
+        [Test]
+        public void InputEnterTwiceDoesNotIndent()
+        {
+            var window = new Window(0, 0, 100, 100, "Test", false);
+            var userInterface = new SimpleTwoPanelUI();
+
+            window.UserInterface = userInterface;
+            userInterface.SetNoteEditorKeyboardFocus();
+
+            float time = 1f / 60f;
+
+            window.RenderFrame(time, new InputSnapshotForTests());
+
+            var snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyCharPress(' '); snapshot.AddKeyEvent(new KeyEvent(Key.Space, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress(' '); snapshot.AddKeyEvent(new KeyEvent(Key.Space, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('a'); snapshot.AddKeyEvent(new KeyEvent(Key.A, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('s'); snapshot.AddKeyEvent(new KeyEvent(Key.S, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('d'); snapshot.AddKeyEvent(new KeyEvent(Key.D, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('f'); snapshot.AddKeyEvent(new KeyEvent(Key.F, true, ModifierKeys.None));
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyEvent(new KeyEvent(Key.Enter, true, ModifierKeys.None)); // no KeyCharPress on newline, just key event for enter
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+            snapshot.AddKeyEvent(new KeyEvent(Key.Enter, false, ModifierKeys.None)); // no KeyCharPress on newline, just key event for enter
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyEvent(new KeyEvent(Key.Enter, true, ModifierKeys.None)); // no KeyCharPress on newline, just key event for enter
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+            snapshot.AddKeyEvent(new KeyEvent(Key.Enter, false, ModifierKeys.None)); // no KeyCharPress on newline, just key event for enter
+            window.RenderFrame(time, snapshot); snapshot = new InputSnapshotForTests();
+
+            snapshot.AddKeyCharPress('a'); snapshot.AddKeyEvent(new KeyEvent(Key.A, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('s'); snapshot.AddKeyEvent(new KeyEvent(Key.S, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('d'); snapshot.AddKeyEvent(new KeyEvent(Key.D, true, ModifierKeys.None));
+            snapshot.AddKeyCharPress('f'); snapshot.AddKeyEvent(new KeyEvent(Key.F, true, ModifierKeys.None));
+
+            window.RenderFrame(time, snapshot);
+
+            Assert.AreEqual("  asdf\n  \nasdf", userInterface.Note.Text);
 
             window.Dispose();
         }
