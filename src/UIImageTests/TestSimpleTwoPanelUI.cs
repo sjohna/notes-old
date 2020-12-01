@@ -46,6 +46,26 @@ namespace UIImageTests
             yield return new object[] { "Plain text", 200, 200, 0.5f };
             yield return new object[] { "AST", 200, 1000, 0.5f };
             yield return new object[] { "Plain text", 200, 1000, 0.5f };
+
+            yield return new object[] { "AST", 1280, 800, 0.0f };
+            yield return new object[] { "Plain text", 1280, 800, 0.0f };
+            yield return new object[] { "AST", 500, 500, 0.0f };
+            yield return new object[] { "Plain text", 500, 500, 0.0f };
+
+            yield return new object[] { "AST", 1280, 800, 0.25f };
+            yield return new object[] { "Plain text", 1280, 800, 0.25f };
+            yield return new object[] { "AST", 500, 500, 0.25f };
+            yield return new object[] { "Plain text", 500, 500, 0.25f };
+
+            yield return new object[] { "AST", 1280, 800, 0.75f };
+            yield return new object[] { "Plain text", 1280, 800, 0.75f };
+            yield return new object[] { "AST", 500, 500, 0.75f };
+            yield return new object[] { "Plain text", 500, 500, 0.75f };
+
+            yield return new object[] { "AST", 1280, 800, 1.0f };
+            yield return new object[] { "Plain text", 1280, 800, 1.0f };
+            yield return new object[] { "AST", 500, 500, 1.0f };
+            yield return new object[] { "Plain text", 500, 500, 1.0f };
         }
 
         [Test]
