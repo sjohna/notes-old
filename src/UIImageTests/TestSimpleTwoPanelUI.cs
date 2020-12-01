@@ -36,26 +36,26 @@ namespace UIImageTests
             if (testInfo != null) testInfo.Dispose();
         }
 
-        public static IEnumerable<object[]> TestCaseParameters()
+        public static IEnumerable<object[]> FiftyFiftyColumnsTestCases()
         {
-            yield return new object[] { "AST", 1280, 800 };
-            yield return new object[] { "Plain text", 1280, 800 };
-            yield return new object[] { "AST", 500, 500 };
-            yield return new object[] { "Plain text", 500, 500 };
-            yield return new object[] { "AST", 200, 200 };
-            yield return new object[] { "Plain text", 200, 200 };
-            yield return new object[] { "AST", 200, 1000 };
-            yield return new object[] { "Plain text", 200, 1000 };
+            yield return new object[] { "AST", 1280, 800, 0.5f };
+            yield return new object[] { "Plain text", 1280, 800, 0.5f };
+            yield return new object[] { "AST", 500, 500, 0.5f };
+            yield return new object[] { "Plain text", 500, 500, 0.5f };
+            yield return new object[] { "AST", 200, 200, 0.5f };
+            yield return new object[] { "Plain text", 200, 200, 0.5f };
+            yield return new object[] { "AST", 200, 1000, 0.5f };
+            yield return new object[] { "Plain text", 200, 1000, 0.5f };
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void EmptyInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void EmptyInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(EmptyInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(EmptyInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion*100,0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -64,13 +64,13 @@ namespace UIImageTests
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void SingleLineInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void SingleLineInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(SingleLineInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(SingleLineInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -81,13 +81,13 @@ namespace UIImageTests
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void MultipleParagraphInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void MultipleParagraphInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(MultipleParagraphInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(MultipleParagraphInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -103,13 +103,13 @@ This is a third line!";
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void LineBreaksInParagraphInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void LineBreaksInParagraphInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(LineBreaksInParagraphInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(LineBreaksInParagraphInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -123,13 +123,13 @@ This is a third line in the same paragraph!";
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void ListInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void ListInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(ListInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(ListInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -147,13 +147,13 @@ This is a third line in the same paragraph!";
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void BoldAndItalicInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void BoldAndItalicInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(BoldAndItalicInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(BoldAndItalicInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -164,13 +164,13 @@ This is a third line in the same paragraph!";
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void HeadingsInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void HeadingsInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(HeadingsInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(HeadingsInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -192,13 +192,13 @@ Alternate Heading Two
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void HorizontalRulesInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void HorizontalRulesInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(HorizontalRulesInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(HorizontalRulesInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -216,13 +216,13 @@ ___";
 
         // test case input text taken from example at https://markdown-it.github.io/
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void BlockQuotesInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void BlockQuotesInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(BlockQuotesInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(BlockQuotesInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -238,13 +238,13 @@ ___";
 
         // test case input text taken from example at https://markdown-it.github.io/
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void CodeInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void CodeInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(CodeInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(CodeInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -283,13 +283,13 @@ var foo = function(bar) {
 
         // test case input text taken from example at https://markdown-it.github.io/
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void OrderedListsInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void OrderedListsInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(OrderedListsInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(OrderedListsInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 
@@ -315,13 +315,13 @@ Start numbering with offset:
 
         // test case input text taken from example at https://markdown-it.github.io/
         [Test]
-        [TestCaseSource(nameof(TestCaseParameters))]
-        public void NestedQuotesAndListsInInputText(string renderType, int windowWidth, int windowHeight)
+        [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
+        public void NestedQuotesAndListsInInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
         {
-            var testName = $"{nameof(NestedQuotesAndListsInInputText)}_{renderType.Replace(" ", "")}Renderer";
+            var testName = $"{nameof(NestedQuotesAndListsInInputText)}_{renderType.Replace(" ", "")}Renderer_{(int)Math.Round(leftPanelProportion * 100, 0)}";
             testInfo = testSupport.CreateTestInfo(nameof(TestSimpleTwoPanelUI), testName, windowWidth, windowHeight);
 
-            var userInterface = new SimpleTwoPanelUI();
+            var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
             userInterface.CurrentRenderType = renderType;
 

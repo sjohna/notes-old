@@ -50,8 +50,10 @@ namespace Notes.UserInterfaces
 
         // TODO: make the SubmitUI method take in the window, not the constructor
         // TODO: new interface: IWindowRenderer. Change UserInterface terminology to Renderer, differentiate between renderers for a whole window, and sub-renderers
-        public SimpleTwoPanelUI()
+        public SimpleTwoPanelUI(float leftPanelProportion = 0.5f)
         {
+            this.leftPanelProportion = leftPanelProportion;
+
             noteMarkdownDisplay = new NoteMarkdownDisplay("Markdown area", Note);
 
             noteEditor = new NoteEditor("Text area", Note);
