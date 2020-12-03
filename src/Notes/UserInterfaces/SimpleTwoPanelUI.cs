@@ -104,15 +104,17 @@ namespace Notes.UserInterfaces
 
             float paneHeight = ImGui.GetWindowSize().Y - panelCursorY - 8;  // TODO: parameterize this better...
             //float paneWidth = (ImGui.GetWindowSize().X - 24) / 2;
-            float paneWidth = (ImGui.GetWindowSize().X * leftPanelProportion) - 12; 
+            float paneWidth = paneWidth = Math.Min((ImGui.GetWindowSize().X * leftPanelProportion) - 12, ImGui.GetWindowSize().X - 16);
 
-            noteEditor.Render(paneWidth, paneHeight);
+            if (paneWidth >= 0)
+            {
+                noteEditor.Render(paneWidth, paneHeight);
+                ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X * leftPanelProportion + 4, panelCursorY));
+            }
 
-            ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X * leftPanelProportion + 4, panelCursorY));
+            paneWidth = Math.Min((ImGui.GetWindowSize().X * (1-leftPanelProportion)) - 12, ImGui.GetWindowSize().X - 16);
 
-            paneWidth = (ImGui.GetWindowSize().X * (1-leftPanelProportion)) - 12;
-
-            noteMarkdownDisplay.Render(paneWidth, paneHeight);
+            if (paneWidth >= 0) noteMarkdownDisplay.Render(paneWidth, paneHeight);
 
             ImGui.End();
         }
