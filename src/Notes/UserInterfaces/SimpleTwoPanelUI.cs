@@ -19,28 +19,28 @@ namespace Notes.UserInterfaces
         // TODO: deduplicate these two properties
         public string CurrentRenderType
         {
-            get => renderTypeComboBox.CurrentSelection;
+            get => renderTypeComboBox.CurrentSelection.OptionText;
             set
             {
                 if (value == "AST")
                 {
-                    noteMarkdownDisplay.Renderer = new MarkdigASTRenderer();
+                    noteWidget.Renderer = new MarkdigASTRenderer();
                 }
                 else if (value == "Plain text")
                 {
-                    noteMarkdownDisplay.Renderer = new MarkdigPlainTextRenderer();
+                    noteWidget.Renderer = new MarkdigPlainTextRenderer();
                 }
                 else
                 {
                     throw new ArgumentException("Invalid render type.", nameof(CurrentRenderType));
                 }
 
-                renderTypeComboBox.CurrentSelection = value;
+                renderTypeComboBox.SetCurrentSelection(value);
             }
         }
 
-        private StringListComboBox renderTypeComboBox;
-        private NoteMarkdownDisplay noteMarkdownDisplay;
+        private ComboBox<String> renderTypeComboBox;
+        private NoteWidget noteWidget;
         private NoteEditor noteEditor;
 
         private GenericFrame noteEditorFrame;
@@ -57,15 +57,15 @@ namespace Notes.UserInterfaces
         {
             this.leftPanelProportion = leftPanelProportion;
 
-            noteMarkdownDisplay = new NoteMarkdownDisplay("Markdown area", Note);
-            noteMarkdownDisplayFrame = new GenericFrame("Markdown frame", noteMarkdownDisplay);
+            noteWidget = new NoteWidget("Markdown area", Note);
+            noteMarkdownDisplayFrame = new GenericFrame("Markdown frame", noteWidget);
 
             noteEditor = new NoteEditor("Text area", Note);
             noteEditorFrame = new GenericFrame("Text area frame", noteEditor);
 
-            renderTypeComboBox = new StringListComboBox("Render Type", new string[] { "AST", "Plain text" }, "Plain text");
+            renderTypeComboBox = new ComboBox<String>("Render Type", new string[] { "AST", "Plain text" }, "Plain text");
             CurrentRenderType = "Plain text";   // super hacky. I should make the combo box widget support objects instead of strings
-            renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItem; };
+            renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItemText; };
         }
 
         public unsafe void SubmitUI(Sdl2Window _window)
