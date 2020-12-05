@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Notes.Widgets
 {
-    public interface IWidget
+    public interface IFrame
     {
         public string Name { get; }
 
-        public void Render();
+        public void Render(float width, float height);
     }
 }

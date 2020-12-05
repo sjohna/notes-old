@@ -23,13 +23,9 @@ namespace Notes.Widgets
             this.Note = note;
         }
 
-        public void Render(float width, float height)
+        public void Render()
         {
-            ImGui.BeginChild(Name, new Vector2(width, height), true);
-
             Renderer.Render(Note.Markdown);
-
-            ImGui.End();
         }
     }
 }

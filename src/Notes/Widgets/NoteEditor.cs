@@ -23,11 +23,16 @@ namespace Notes.Widgets
             this.Note = note;
         }
 
-        public unsafe void Render(float width, float height)
+        public unsafe void Render()
         {
-            ImGui.BeginChild(Name, new Vector2(width, height), true);
+            var size = ImGui.GetWindowSize();
+            var cursorPos = ImGui.GetCursorPos();
+            var padding = ImGui.GetStyle().WindowPadding;
 
-            if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(width - 16, height - 16), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.AllowTabInput, textBoxCallback))
+            float height = size.Y - cursorPos.Y - padding.Y;
+            float width = size.X - padding.X * 2;
+
+            if (ImGui.InputTextMultiline($"##{Name} text input", ref Note._Text, 1000000, new Vector2(width, height), ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.AllowTabInput, textBoxCallback))
             {
                 Note.ParseMarkdown();
             }
@@ -37,8 +42,6 @@ namespace Notes.Widgets
                 ImGui.SetKeyboardFocusHere(-1);
                 _setKeyboardFocus = false;  // is this too much of a hack?
             }
-
-            ImGui.End();
         }
 
 

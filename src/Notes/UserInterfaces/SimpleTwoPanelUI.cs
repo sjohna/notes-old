@@ -43,6 +43,9 @@ namespace Notes.UserInterfaces
         private NoteMarkdownDisplay noteMarkdownDisplay;
         private NoteEditor noteEditor;
 
+        private GenericFrame noteEditorFrame;
+        private GenericFrame noteMarkdownDisplayFrame;
+
         private float leftPanelProportion = 0.50f;
 
         private bool isDragging = false;
@@ -55,8 +58,10 @@ namespace Notes.UserInterfaces
             this.leftPanelProportion = leftPanelProportion;
 
             noteMarkdownDisplay = new NoteMarkdownDisplay("Markdown area", Note);
+            noteMarkdownDisplayFrame = new GenericFrame("Markdown frame", noteMarkdownDisplay);
 
             noteEditor = new NoteEditor("Text area", Note);
+            noteEditorFrame = new GenericFrame("Text area frame", noteEditor);
 
             renderTypeComboBox = new StringListComboBox("Render Type", new string[] { "AST", "Plain text" }, "Plain text");
             CurrentRenderType = "Plain text";   // super hacky. I should make the combo box widget support objects instead of strings
@@ -71,10 +76,9 @@ namespace Notes.UserInterfaces
             ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
             ImGui.Begin("", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 
-            // TODO: figure out a better way to handle widgets that don't care about size...
-            renderTypeComboBox.Render(-1,-1);
+            renderTypeComboBox.Render();
 
-            // set cursor if it's close to the middle
+            // TODO: set mouse cursor if it's close to the middle
 
             if (Math.Abs(ImGui.GetMousePos().X - (ImGui.GetWindowSize().X * leftPanelProportion)) <= 4)
             {
@@ -108,13 +112,13 @@ namespace Notes.UserInterfaces
 
             if (paneWidth >= 0)
             {
-                noteEditor.Render(paneWidth, paneHeight);
+                noteEditorFrame.Render(paneWidth, paneHeight);
                 ImGui.SetCursorPos(new Vector2(ImGui.GetWindowSize().X * leftPanelProportion + 4, panelCursorY));
             }
 
             paneWidth = Math.Min((ImGui.GetWindowSize().X * (1-leftPanelProportion)) - 12, ImGui.GetWindowSize().X - 16);
 
-            if (paneWidth >= 0) noteMarkdownDisplay.Render(paneWidth, paneHeight);
+            if (paneWidth >= 0) noteMarkdownDisplayFrame.Render(paneWidth, paneHeight);
 
             ImGui.End();
         }
