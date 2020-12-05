@@ -10,50 +10,29 @@ namespace Notes.Widgets
     {
         public string Name { get; private set; }
 
-        public (string OptionText, TSelection Option) CurrentSelection { get; set; }
+        private Func<IEnumerable<(string Text, TSelection Value)>> getOptions;
 
-        private List<(string OptionText, TSelection Option)> options;
+        private Func<(string Text, TSelection Value)> getSelectedItem;
 
         IEqualityComparer<TSelection> comparer;
 
-        public ComboBox(string name, IEnumerable<TSelection> options, TSelection currentSelection, IEqualityComparer<TSelection> comparer = null)
+        public ComboBox(string name, Func<IEnumerable<(string Text, TSelection Value)>> getOptions, Func<(string Text, TSelection Value)> getCurrentSelection, IEqualityComparer<TSelection> comparer = null)
         {
             this.Name = name;
-            this.CurrentSelection = (currentSelection.ToString(), currentSelection);
-            this.options = new List<(string OptionText, TSelection Option)>();
+            this.getOptions = getOptions;
+            this.getSelectedItem = getCurrentSelection;
             this.comparer = comparer ?? EqualityComparer<TSelection>.Default;
-
-            foreach (var option in options)
-            {
-                this.options.Add((option.ToString(), option));
-            }
-        }
-
-        public void SetCurrentSelection(TSelection selection)
-        {
-            foreach (var option in options)
-            {
-                if (comparer.Equals(option.Option, selection))
-                {
-                    CurrentSelection = option;
-                    return;
-                }
-            }
-
-            // TODO: better exception?
-            throw new Exception("Invalid selection!");
         }
 
         public void Render()
         {
-            if (ImGui.BeginCombo(Name, CurrentSelection.OptionText))
+            if (ImGui.BeginCombo(Name, getSelectedItem().Text))
             {
-                foreach (var option in options)
+                foreach (var option in getOptions())
                 {
-                    if (ImGui.Selectable(option.OptionText, comparer.Equals(CurrentSelection.Option, option.Option)))
+                    if (ImGui.Selectable(option.Text, comparer.Equals(getSelectedItem().Value, option.Value)))
                     {
-                        ItemSelected?.Invoke(this, new StringListComboBoxSelectionEventArgs(option.OptionText, option.Option, comparer.Equals(CurrentSelection.Option, option.Option)));
-                        CurrentSelection = option;
+                        ItemSelected?.Invoke(this, new StringListAltComboBoxSelectionEventArgs(option, !comparer.Equals(getSelectedItem().Value, option.Value)));
                     }
                 }
 
@@ -61,21 +40,18 @@ namespace Notes.Widgets
             }
         }
 
-        public event EventHandler<StringListComboBoxSelectionEventArgs> ItemSelected;
+        public event EventHandler<StringListAltComboBoxSelectionEventArgs> ItemSelected;
 
-        public class StringListComboBoxSelectionEventArgs
+        public class StringListAltComboBoxSelectionEventArgs
         {
-            public string SelectedItemText { get; private set; }
-
-            public TSelection SelectedItem { get; private set; }
-
             public bool SelectionChanged { get; private set; }
 
-            public StringListComboBoxSelectionEventArgs(string selectedItemText, TSelection selectedItem, bool selectionChanged)
+            public (string Text, TSelection Value) SelectedItem { get; private set; }
+
+            public StringListAltComboBoxSelectionEventArgs((string Text, TSelection Value) selectedItem, bool selectionChanged)
             {
-                SelectedItemText = selectedItemText;
                 SelectedItem = selectedItem;
-                SelectionChanged = selectionChanged; 
+                SelectionChanged = selectionChanged;
             }
         }
     }

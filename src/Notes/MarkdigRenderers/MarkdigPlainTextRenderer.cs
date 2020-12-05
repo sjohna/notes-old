@@ -8,6 +8,10 @@ namespace Notes.MarkdigRenderers
 {
     public class MarkdigPlainTextRenderer : IMarkdigRenderer
     {
+        private static Lazy<IMarkdigRenderer> lazyInstance = new Lazy<IMarkdigRenderer>(() => new MarkdigPlainTextRenderer());
+
+        public static IMarkdigRenderer Instance => lazyInstance.Value;
+
         private bool atLineStart;
 
         public void Render(MarkdownDocument document)

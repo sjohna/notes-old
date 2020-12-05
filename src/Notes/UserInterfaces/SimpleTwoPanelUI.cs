@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using Veldrid.Sdl2;
+using System.Linq;
 
 namespace Notes.UserInterfaces
 {
@@ -16,30 +17,9 @@ namespace Notes.UserInterfaces
     {
         public Note Note = new Note();
 
-        // TODO: deduplicate these two properties
-        public string CurrentRenderType
-        {
-            get => renderTypeComboBox.CurrentSelection.OptionText;
-            set
-            {
-                if (value == "AST")
-                {
-                    noteWidget.Renderer = new MarkdigASTRenderer();
-                }
-                else if (value == "Plain text")
-                {
-                    noteWidget.Renderer = new MarkdigPlainTextRenderer();
-                }
-                else
-                {
-                    throw new ArgumentException("Invalid render type.", nameof(CurrentRenderType));
-                }
+        List<(string Text, IMarkdigRenderer Value)> Renderers;
 
-                renderTypeComboBox.SetCurrentSelection(value);
-            }
-        }
-
-        private ComboBox<String> renderTypeComboBox;
+        private ComboBox<IMarkdigRenderer> renderTypeComboBox;
         private NoteWidget noteWidget;
         private NoteEditor noteEditor;
 
@@ -63,9 +43,26 @@ namespace Notes.UserInterfaces
             noteEditor = new NoteEditor("Text area", Note);
             noteEditorFrame = new GenericFrame("Text area frame", noteEditor);
 
-            renderTypeComboBox = new ComboBox<String>("Render Type", new string[] { "AST", "Plain text" }, "Plain text");
-            CurrentRenderType = "Plain text";   // super hacky. I should make the combo box widget support objects instead of strings
-            renderTypeComboBox.ItemSelected += (sender, args) => { CurrentRenderType = args.SelectedItemText; };
+            //renderTypeComboBox = new ComboBox<String>("Render Type", new string[] { "AST", "Plain text" }, "Plain text");
+            Renderers = new List<(string Text, IMarkdigRenderer Value)>()
+            {
+                ("Plain text", MarkdigPlainTextRenderer.Instance),
+                ("AST", MarkdigASTRenderer.Instance)
+            };
+
+
+            renderTypeComboBox = new ComboBox<IMarkdigRenderer>("Render Type",
+                getOptions: () => Renderers,
+                getCurrentSelection: () => Renderers.Find((renderer) => renderer.Value == noteWidget.Renderer));
+
+            noteWidget.Renderer = Renderers.First().Value;
+
+            renderTypeComboBox.ItemSelected += (sender, args) => noteWidget.Renderer = args.SelectedItem.Value;
+        }
+
+        public void SetMarkdigRenderer(IMarkdigRenderer renderer)
+        {
+            noteWidget.Renderer = renderer;
         }
 
         public unsafe void SubmitUI(Sdl2Window _window)

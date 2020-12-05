@@ -68,6 +68,13 @@ namespace UIImageTests
             yield return new object[] { "Plain text", 500, 500, 1.0f };
         }
 
+        private static IMarkdigRenderer GetRendererForType(string type)
+        {
+            if (type == "Plain text") return MarkdigPlainTextRenderer.Instance;
+            if (type == "AST") return MarkdigASTRenderer.Instance;
+            return null;
+        }
+
         [Test]
         [TestCaseSource(nameof(FiftyFiftyColumnsTestCases))]
         public void EmptyInputText(string renderType, int windowWidth, int windowHeight, float leftPanelProportion)
@@ -77,7 +84,7 @@ namespace UIImageTests
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             testInfo.Window.UserInterface = userInterface;
             testSupport.DoTest(testInfo);
@@ -92,7 +99,7 @@ namespace UIImageTests
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = "This is a single line!";
 
@@ -109,7 +116,7 @@ namespace UIImageTests
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
 
             userInterface.Note.Text = @"This is a single line!
@@ -131,7 +138,7 @@ This is a third line!";
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
 
             userInterface.Note.Text = @"This is a line in a paragraph!
@@ -151,7 +158,7 @@ This is a third line in the same paragraph!";
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"List of things:
  - thing one
@@ -175,7 +182,7 @@ This is a third line in the same paragraph!";
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"This is *italic* and this is **bold** and this is ***bold italic***!";
 
@@ -192,7 +199,7 @@ This is a third line in the same paragraph!";
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"# Heading One
 ## Heading Two
@@ -220,7 +227,7 @@ Alternate Heading Two
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"Horizontal rules:
 
@@ -244,7 +251,7 @@ ___";
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"Block quotes:
 
@@ -266,7 +273,7 @@ ___";
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"
 ## Code
@@ -311,7 +318,7 @@ var foo = function(bar) {
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"
 Ordered
@@ -343,7 +350,7 @@ Start numbering with offset:
 
             var userInterface = new SimpleTwoPanelUI(leftPanelProportion);
 
-            userInterface.CurrentRenderType = renderType;
+            userInterface.SetMarkdigRenderer(GetRendererForType(renderType));
 
             userInterface.Note.Text = @"
 > test:

@@ -9,6 +9,10 @@ namespace Notes.MarkdigRenderers
 {
     public class MarkdigASTRenderer : IMarkdigRenderer
     {
+        private static Lazy<IMarkdigRenderer> lazyInstance = new Lazy<IMarkdigRenderer>(() => new MarkdigASTRenderer());
+
+        public static IMarkdigRenderer Instance => lazyInstance.Value;
+
         public void Render(MarkdownDocument document)
         {
             ImGui.Text($"Document: {document.ToPositionText()}");
